@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TicketRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -23,7 +25,7 @@ class Ticket
     private $title;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
      */
     private $content;
 
@@ -31,11 +33,6 @@ class Ticket
      * @ORM\Column(type="integer")
      */
     private $status;
-
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
-    private $comments = [];
 
     /**
      * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="ticketsA")
@@ -47,6 +44,42 @@ class Ticket
      * @ORM\ManyToOne(targetEntity=Agent::class, inversedBy="tickets")
      */
     private $agent;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdDate;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updatedDate;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isEscalated;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $closeReason;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $priority;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="ticket", orphanRemoval=true)
+     */
+    private $comments;
+
+    public function __construct()
+    {
+        $this->comments = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -89,18 +122,6 @@ class Ticket
         return $this;
     }
 
-    public function getComments(): ?array
-    {
-        return $this->comments;
-    }
-
-    public function setComments(?array $comments): self
-    {
-        $this->comments = $comments;
-
-        return $this;
-    }
-
     public function getCustomer(): ?Customer
     {
         return $this->customer;
@@ -121,6 +142,97 @@ class Ticket
     public function setAgent(?Agent $agent): self
     {
         $this->agent = $agent;
+
+        return $this;
+    }
+
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(?\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getIsEscalated(): ?bool
+    {
+        return $this->isEscalated;
+    }
+
+    public function setIsEscalated(bool $isEscalated): self
+    {
+        $this->isEscalated = $isEscalated;
+
+        return $this;
+    }
+
+    public function getCloseReason(): ?string
+    {
+        return $this->closeReason;
+    }
+
+    public function setCloseReason(?string $closeReason): self
+    {
+        $this->closeReason = $closeReason;
+
+        return $this;
+    }
+
+    public function getPriority(): ?int
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(int $priority): self
+    {
+        $this->priority = $priority;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Comment[]
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setTicket($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): self
+    {
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
+            // set the owning side to null (unless already changed)
+            if ($comment->getTicket() === $this) {
+                $comment->setTicket(null);
+            }
+        }
 
         return $this;
     }
