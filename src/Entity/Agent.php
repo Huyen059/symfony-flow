@@ -14,15 +14,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Agent extends User
 {
-    private bool $isSecondLine = false;
+    protected int $reopen = 0;
 
     /**
      * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="agent")
      */
-    private Collection $tickets;
+    protected Collection $tickets;
 
     /**
-     * Customer constructor.
+     * Agent constructor.
      */
     public function __construct()
     {
