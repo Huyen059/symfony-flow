@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="89e1fb28-f293-4980-9288-5dbff72e7dee" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/templates/customer/CustomerTicketDetails.html.twig" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/customer/CustomerTicketsHomepage.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/CustomerController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/CustomerController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/customer/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/customer/index.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/CustomerController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/symfony.lock" beforeDir="false" afterPath="$PROJECT_DIR$/symfony.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/customer/CustomerTicketDetails.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/customer/customerTickets.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/customer/CustomerTicketsHomepage.html.twig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/customer/index.html.twig" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -137,7 +140,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="add_unversioned_files" value="$PROJECT_DIR$/.env.local" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../symfonyTwig" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -167,11 +170,18 @@
       <option name="presentableId" value="Default" />
       <updated>1598261796006</updated>
       <workItem from="1598261798319" duration="5278000" />
-      <workItem from="1598342782141" duration="8325000" />
+      <workItem from="1598342782141" duration="11981000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1088" y="398" width="424" height="491" key="FileChooserDialogImpl" timestamp="1598363390444">
+      <screen x="72" y="27" width="1948" height="1266" />
+    </state>
+    <state x="896" y="398" width="424" height="491" key="FileChooserDialogImpl/72.27.1580.1266@72.27.1580.1266" timestamp="1598360272596" />
+    <state x="1088" y="398" width="424" height="491" key="FileChooserDialogImpl/72.27.1948.1266@72.27.1948.1266" timestamp="1598363390444" />
   </component>
 </project>
