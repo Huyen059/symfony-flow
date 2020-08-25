@@ -8,11 +8,21 @@ use Symfony\Component\Routing\Annotation\Route;
 class CustomerController extends AbstractController
 {
     /**
-     * @Route("/customer/home", name="customer_home")
+     * @Route("/customer/tickets", name="customer_home")
      */
-    public function index()
+    public function CustomerTicketsHomepage()
     {
-        return $this->render('customer/index.html.twig', [
+        return $this->render('customer/CustomerTicketsHomepage.html.twig', [
+            'controller_name' => 'CustomerController',
+        ]);
+    }
+
+    /**
+     * @Route("/customer/comments", name="customer_home")
+     */
+    public function CustomerTicketDetails()
+    {
+        return $this->render('customer/CustomerTicketDetails.html.twig', [
             'controller_name' => 'CustomerController',
         ]);
     }
