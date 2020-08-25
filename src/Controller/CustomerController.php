@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CustomerController extends AbstractController
 {
     /**
-     * @Route("/customer/home", name="customer_home")
+     * @Route("/customer", name="customer")
      */
     public function index()
     {
@@ -16,4 +16,16 @@ class CustomerController extends AbstractController
             'controller_name' => 'CustomerController',
         ]);
     }
+
+    /**
+     * @Route("/customer/tickets", name="customer_tickets")
+     */
+    public function customerTickets()
+    {
+        return $this->render('customer/customerTickets.html.twig', [
+            'controller_name' => 'CustomerController',
+        ]);
+    }
+
 }
+
