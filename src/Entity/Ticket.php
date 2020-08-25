@@ -12,6 +12,13 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Ticket
 {
+    public const OPEN = 0;
+    public const IN_PROGRESS = 1;
+    public const WAITING_FOR_CUSTOMER_FEEDBACK = 2;
+    public const CLOSE = 3;
+    public const LOW_PRIORITY = 0;
+    public const MEDIUM_PRIORITY = 1;
+    public const HIGH_PRIORITY = 2;
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -32,7 +39,7 @@ class Ticket
     /**
      * @ORM\Column(type="integer")
      */
-    private $status;
+    private $status = self::OPEN;
 
     /**
      * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="ticketsA")
@@ -58,7 +65,7 @@ class Ticket
     /**
      * @ORM\Column(type="boolean")
      */
-    private $isEscalated;
+    private $isEscalated = false;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -68,7 +75,7 @@ class Ticket
     /**
      * @ORM\Column(type="integer")
      */
-    private $priority;
+    private $priority = self::LOW_PRIORITY;
 
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="ticket", orphanRemoval=true)
