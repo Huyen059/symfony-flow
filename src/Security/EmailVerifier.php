@@ -41,7 +41,7 @@ class EmailVerifier
         try {
             $this->mailer->send($email);
         } catch (TransportExceptionInterface $e) {
-            die("Email is not sent!");
+            die("Email failed to send!");
         }
     }
 
