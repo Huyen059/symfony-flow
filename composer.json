@@ -37,6 +37,10 @@
         "symfony/validator": "5.1.*",
         "symfony/web-link": "5.1.*",
         "symfony/yaml": "5.1.*",
+<<<<<<< HEAD
+        "symfonycasts/reset-password-bundle": "^1.1",
+=======
+>>>>>>> 8b0ef93d1601bcc5ca28bc0f8df670d2fb607220
         "symfonycasts/verify-email-bundle": "^1.0",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0"
