@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Agent extends User
 {
     protected int $reopen = 0;
+    protected bool $isSecondLine = false;
 
     /**
      * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="agent")
@@ -26,7 +27,11 @@ class Agent extends User
      */
     public function __construct()
     {
-        $this->setRoles(["ROLE_AGENT"]);
+        if($this->isSecondLine) {
+            $this->setRoles(["ROLE_AGENT_SECOND_LINE"]);
+        } else {
+            $this->setRoles(["ROLE_AGENT"]);
+        }
         $this->tickets = new ArrayCollection();
     }
 

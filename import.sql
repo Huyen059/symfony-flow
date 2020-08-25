@@ -25,12 +25,15 @@ DROP TABLE IF EXISTS `comment`;
 CREATE TABLE `comment` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ticket_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `content` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `is_private` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_9474526C700047D2` (`ticket_id`),
-  CONSTRAINT `FK_9474526C700047D2` FOREIGN KEY (`ticket_id`) REFERENCES `ticket` (`id`)
+  KEY `IDX_9474526CA76ED395` (`user_id`),
+  CONSTRAINT `FK_9474526C700047D2` FOREIGN KEY (`ticket_id`) REFERENCES `ticket` (`id`),
+  CONSTRAINT `FK_9474526CA76ED395` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -64,7 +67,7 @@ CREATE TABLE `doctrine_migration_versions` (
 
 LOCK TABLES `doctrine_migration_versions` WRITE;
 /*!40000 ALTER TABLE `doctrine_migration_versions` DISABLE KEYS */;
-INSERT INTO `doctrine_migration_versions` VALUES ('DoctrineMigrations\\Version20200824100430','2020-08-24 16:13:31',131),('DoctrineMigrations\\Version20200824102426','2020-08-24 16:13:31',24),('DoctrineMigrations\\Version20200824141025','2020-08-24 16:13:31',82);
+INSERT INTO `doctrine_migration_versions` VALUES ('DoctrineMigrations\\Version20200825083035','2020-08-25 10:30:40',208);
 /*!40000 ALTER TABLE `doctrine_migration_versions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -116,8 +119,8 @@ CREATE TABLE `user` (
   `email` varchar(180) COLLATE utf8mb4_unicode_ci NOT NULL,
   `roles` json NOT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `discr` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `is_verified` tinyint(1) NOT NULL,
+  `discr` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_8D93D649E7927C74` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -145,4 +148,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-24 16:15:14
+-- Dump completed on 2020-08-25 10:34:52
