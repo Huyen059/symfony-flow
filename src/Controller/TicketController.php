@@ -21,7 +21,7 @@ class TicketController extends AbstractController
      */
     public function index(TicketRepository $ticketRepository): Response
     {
-        return $this->render('ticket/show.html.twig', [
+        return $this->render('ticket/index.html.twig', [
             'tickets' => $ticketRepository->findAll(),
         ]);
     }
