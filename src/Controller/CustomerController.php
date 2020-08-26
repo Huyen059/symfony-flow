@@ -17,9 +17,11 @@ class CustomerController extends AbstractController
      */
     public function index()
     {
+        $tickets = $this->getDoctrine()->getRepository(Ticket::class)->findBy(['customer' => $this->getUser()]);
+
 
         return $this->render('customer/index.html.twig', [
-            'controller_name' => 'CustomerController',
+            'tickets' => $tickets,
         ]);
 
     }
@@ -36,13 +38,31 @@ class CustomerController extends AbstractController
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-           $this->getDoctrine()->getManager()->persist($comment);
-           $this->getDoctrine()->getManager()->flush();
+            $ticket->setUpdatedDate(new \DateTimeImmutable());
+            if ($ticket->getStatus() === Ticket::WAITING_FOR_CUSTOMER_FEEDBACK) {
+                $ticket->setStatus(Ticket::IN_PROGRESS);
+            }
+
+            $this->getDoctrine()->getManager()->persist($comment);
+            $this->getDoctrine()->getManager()->persist($ticket);
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('customer_tickets', ['id' => $ticket->getId()]);
 
         }
+        if ($request->request->get('reOpen')) {
+            $ticket->setStatus(Ticket::IN_PROGRESS);
+            $ticket->getAgent()->setReopen($ticket->getAgent()->getReopen() + 1);
+            $this->getDoctrine()->getManager()->persist($ticket);
+            $this->getDoctrine()->getManager()->flush();
+            return $this->redirectToRoute('customer_tickets', ['id' => $ticket->getId()]);
+        }
+
 
         return $this->render('customer/customerTickets.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'ticket' => $ticket,
+            'close' => Ticket::CLOSE
         ]);
     }
 
