@@ -1,28 +1,41 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}User index{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block body %}
-    <h1>Customer index</h1>
+    <h1>Ticket overview</h1>
 
     <table class="table">
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Email</th>
-                <th>IsVerified</th>
-                <th>actions</th>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Customer Id</th>
+                <th>Agent Id</th>
+                <th>Priority</th>
+                <th>Creation date</th>
+                <th>Update date</th>
+                <th>Escalated?</th>
+                <th>Reason for closing</th>
             </tr>
         </thead>
         <tbody>
-        {% for customer in customers %}
+        {% for ticket in tickets %}
             <tr>
-                <td>{{ customer.id }}</td>
-                <td>{{ customer.email }}</td>
-                <td>{{ customer.isVerified ? 'Yes' : 'No' }}</td>
+                <td>{{ ticket.id }}</td>
+                <td>{{ ticket.title }}</td>
+                <td>{{ ticket.content }}</td>
+                <td>{{ ticket.customer }}</td>
+                <td>{{ ticket.agent }}</td>
+                <td>{{ ticket.priority }}</td>
+                <td>{{ ticket.createdDate|date("F jS \\a\\t g:ia") }}</td>
+                <td>{{ ticket.updatedDate|date("F jS \\a\\t g:ia") }}</td>
+                <td>{{ ticket.isEscalated ? 'Yes' : 'No' }}</td>
+                <td>{{ ticket.closeReason}}</td>
                 <td>
-                    <a href="{{ path('user_show', {'id': customer.id}) }}">show</a>
-                    <a href="{{ path('user_edit', {'id': customer.id}) }}">edit</a>
+                    <a href="{{ path('ticket_show', {'id': ticket.id}) }}">show</a>
+                    <a href="{{ path('ticket_edit', {'id': ticket.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}
@@ -42,6 +55,10 @@
             <th>Id</th>
             <th>Email</th>
             <th>IsVerified</th>
+            <th>Number of <em>open</em> tickets</th>
+            <th>Number of <em>closed</em> tickets</th>
+            <th>Number of <em>reopened</em> tickets</th>
+            <th>Ticket success rate (closed - reopened)</th>
             <th>actions</th>
         </tr>
         </thead>
@@ -51,6 +68,10 @@
                 <td>{{ agent.id }}</td>
                 <td>{{ agent.email }}</td>
                 <td>{{ agent.isVerified ? 'Yes' : 'No' }}</td>
+                <td>{{ agent.openTickets }}</td>
+                <td>{{ agent.closedTickets }}</td>
+                <td>{{ agent.reopen }}</td>
+                <td>{{ agent.closedTickets - agent.reopen}}</td>
                 <td>
                     <a href="{{ path('user_show', {'id': agent.id}) }}">show</a>
                     <a href="{{ path('user_edit', {'id': agent.id}) }}">edit</a>
@@ -63,5 +84,11 @@
         {% endfor %}
         </tbody>
     </table>
-    <a href="{{ path('user_new') }}">Create new</a>
+
+    <a href="{{ path('agent_new') }}">Create new</a>
+
+    <h1>Ticket Control</h1>
+    <form action="index.html.twig" method="POST">
+        <button name="openTickets">Open All Tickets</button>
+    </form>
 {% endblock %}
