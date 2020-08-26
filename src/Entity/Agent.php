@@ -27,6 +27,7 @@ class Agent extends User
      */
     public function __construct()
     {
+        parent::__construct();
         if($this->isSecondLine) {
             $this->setRoles(["ROLE_AGENT_SECOND_LINE"]);
         } else {
