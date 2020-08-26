@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Agent;
 use App\Entity\Customer;
+use App\Entity\Manager;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Security\EmailVerifier;
@@ -60,6 +62,14 @@ class RegistrationController extends AbstractController
             // do anything else you need here, like send an email
 
             return $this->redirectToRoute('customer');
+
+            if ($this->getUser() instanceof Customer) {
+                return $this->redirectToRoute('customer_home');
+            } elseif ($this->getUser() instanceof Agent) {
+                return $this->redirectToRoute('agent_home');
+            } elseif ($this->getUser() instanceof Manager) {
+                return $this->redirectToRoute('manager_dash');
+            }
         }
 
         return $this->render('registration/register.html.twig', [
@@ -82,12 +92,20 @@ class RegistrationController extends AbstractController
         } catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('verify_email_error', $exception->getReason());
 
+
             return $this->redirectToRoute('app_register');
         }
 
-        // @TODO Change the redirect on success and handle or remove the flash message in your templates
+        
         $this->addFlash('success', 'Your email address has been verified.');
 
+        if ($this->getUser() instanceof Customer) {
+            return $this->redirectToRoute('customer_home');
+        } elseif ($this->getUser() instanceof Agent) {
+            return $this->redirectToRoute('agent_home');
+        } elseif ($this->getUser() instanceof Manager) {
+            return $this->redirectToRoute('manager_dash');
+        }
         return $this->redirectToRoute('app_register');
     }
 }

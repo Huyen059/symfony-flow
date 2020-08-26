@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Agent;
+use App\Entity\Customer;
+use App\Entity\Manager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,7 +25,13 @@ class UserLoginController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
-
+        if ($this->getUser() instanceof Customer) {
+            return $this->redirectToRoute('customer_home');
+        } elseif ($this->getUser() instanceof Agent) {
+            return $this->redirectToRoute('agent_home');
+        } elseif ($this->getUser() instanceof Manager) {
+            return $this->redirectToRoute('manager_dash');
+        }
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 

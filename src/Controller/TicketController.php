@@ -38,10 +38,6 @@ class TicketController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Set the customer of this ticket to the current login user
             $customer = $this->getUser();
-//            $customer = new Customer();
-//            $customer->setEmail('abc@test.com')
-//                ->setPassword('123456')
-//                ->setRoles(['ROLE_CUSTOMER']);
             $ticket->setCustomer($customer);
             // Set the createdDate to current datetime
             $ticket->setCreatedDate(new \DateTimeImmutable());
@@ -50,7 +46,7 @@ class TicketController extends AbstractController
             $entityManager->persist($ticket);
             $entityManager->flush();
 
-            return $this->redirectToRoute('ticket_index');
+            return $this->redirectToRoute('customer_home');
         }
 
         return $this->render('ticket/new.html.twig', [
@@ -94,7 +90,7 @@ class TicketController extends AbstractController
      */
     public function delete(Request $request, Ticket $ticket): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$ticket->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $ticket->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($ticket);
             $entityManager->flush();
