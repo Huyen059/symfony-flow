@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Agent;
 use App\Entity\Ticket;
+use App\Form\AgentType;
 use App\Repository\TicketRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,4 +29,30 @@ class ManagerDashController extends AbstractController
             'agents' => $agents,'tickets' => $tickets]);
     }
 
+    /**
+     * @Route("/manager/new-agent", name="agent_new", methods={"GET","POST"})
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
+
+    public function newAgent(Request $request)
+    {
+        $agent = new Agent();
+        $form = $this->createForm(AgentType::class, $agent);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Save this ticket to database
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($agent);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('ticket_index');
+        }
+
+        return $this->render('agent/register.html.twig', [
+            'agent' => $agent,
+            'agentForm' => $form->createView(),
+        ]);
+    }
 }
