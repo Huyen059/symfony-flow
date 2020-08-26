@@ -14,8 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Agent extends User
 {
-    protected int $reopen = 0;
-    protected bool $isSecondLine = false;
+    private int $reopen = 0;
+    private bool $isSecondLine = false;
 
     /**
      * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="agent")
@@ -43,6 +43,39 @@ class Agent extends User
     {
         return $this->tickets;
     }
+
+    /**
+     * @return bool
+     */
+    public function getIsSecondLine(): bool
+    {
+        return $this->isSecondLine;
+    }
+
+    /**
+     * @param bool $isSecondLine
+     */
+    public function setIsSecondLine(bool $isSecondLine): void
+    {
+        $this->isSecondLine = $isSecondLine;
+    }
+
+    /**
+     * @return int
+     */
+    public function getReopen(): int
+    {
+        return $this->reopen;
+    }
+
+    /**
+     * @param int $reopen
+     */
+    public function setReopen(int $reopen): void
+    {
+        $this->reopen = $reopen;
+    }
+
 
     public function addTicket(Ticket $ticket): self
     {

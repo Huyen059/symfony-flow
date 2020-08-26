@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit ticket{% endblock %}
+
+{% block body %}
+    <style>
+        .example-wrapper {
+            margin: 1em auto;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 sans-serif;
+        }
+
+        .example-wrapper code {
+            background: #F5F5F5;
+            padding: 2px 6px;
+        }
+    </style>
+
+    <section class="example-wrapper">
+        <h1>All open tickets</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Status</th>
+                <th>CreatedDate</th>
+                <th>UpdatedDate</th>
+                <th>IsEscalated</th>
+                <th>CloseReason</th>
+                <th>Priority</th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ticket in tickets %}
+                {% if ticket.status == open %}
+                    <tr>
+                        <td>{{ ticket.id }}</td>
+                        <td>{{ ticket.title }}</td>
+                        <td>{{ ticket.content }}</td>
+                        <td>{{ ticket.status }}</td>
+                        <td>{{ ticket.createdDate ? ticket.createdDate|date('Y-m-d H:i:s') : '' }}</td>
+                        <td>{{ ticket.updatedDate ? ticket.updatedDate|date('Y-m-d H:i:s') : '' }}</td>
+                        <td>{{ ticket.isEscalated ? 'Yes' : 'No' }}</td>
+                        <td>{{ ticket.closeReason }}</td>
+                        <td>{{ ticket.priority }}</td>
+                        <td>
+                            <form method="post">
+                                <input type="hidden" name="addToDo" value="{{ ticket.id }}">
+                                <button type="submit">Add to ToDo</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endif %}
+            {% else %}
+                <tr>
+                    <td colspan="10">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    <section class="example-wrapper">
+        <h1>To do list</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Status</th>
+                <th>CreatedDate</th>
+                <th>UpdatedDate</th>
+                <th>IsEscalated</th>
+                <th>CloseReason</th>
+                <th>Priority</th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ticket in tickets %}
+                {% if ticket.agent is same as(agent) and ticket.status != close %}
+                    <tr>
+                        <td>{{ ticket.id }}</td>
+                        <td>{{ ticket.title }}</td>
+                        <td>{{ ticket.content }}</td>
+                        <td>{{ ticket.status }}</td>
+                        <td>{{ ticket.createdDate ? ticket.createdDate|date('Y-m-d H:i:s') : '' }}</td>
+                        <td>{{ ticket.updatedDate ? ticket.updatedDate|date('Y-m-d H:i:s') : '' }}</td>
+                        <td>{{ ticket.isEscalated ? 'Yes' : 'No' }}</td>
+                        <td>{{ ticket.closeReason }}</td>
+                        <td>{{ ticket.priority }}</td>
+                        <td>
+                            <a href="{{ path('agent_ticket', {'id': ticket.id}) }}">View details</a>
+                        </td>
+                    </tr>
+                {% endif %}
+            {% else %}
+                <tr>
+                    <td colspan="10">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </section>
+{% endblock %}
