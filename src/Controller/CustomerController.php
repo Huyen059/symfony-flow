@@ -34,6 +34,7 @@ class CustomerController extends AbstractController
         $comment = new Comment();
         $comment->setUser($this->getUser());
         $comment->setTicket($ticket);
+        $error = "";
 
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
@@ -51,18 +52,27 @@ class CustomerController extends AbstractController
 
         }
         if ($request->request->get('reOpen')) {
-            $ticket->setStatus(Ticket::IN_PROGRESS);
-            $ticket->getAgent()->setReopen($ticket->getAgent()->getReopen() + 1);
-            $this->getDoctrine()->getManager()->persist($ticket);
-            $this->getDoctrine()->getManager()->flush();
-            return $this->redirectToRoute('customer_tickets', ['id' => $ticket->getId()]);
+            /** @var \DateTimeImmutable $update */
+            $update = $ticket->getUpdatedDate();
+            if ($update->add(new \DateInterval("PT1H")) >= new \DateTimeImmutable()) {
+
+                $ticket->setStatus(Ticket::IN_PROGRESS);
+                $ticket->getAgent()->setReopen($ticket->getAgent()->getReopen() + 1);
+                $this->getDoctrine()->getManager()->persist($ticket);
+                $this->getDoctrine()->getManager()->flush();
+                return $this->redirectToRoute('customer_tickets', ['id' => $ticket->getId()]);
+            }
+            $error = " You can no longer Re-open a case after it has expired";
+
+
         }
 
 
         return $this->render('customer/customerTickets.html.twig', [
             'form' => $form->createView(),
             'ticket' => $ticket,
-            'close' => Ticket::CLOSE
+            'close' => Ticket::CLOSE,
+            'error' => $error
         ]);
     }
 
