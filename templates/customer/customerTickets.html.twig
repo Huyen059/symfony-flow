@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Message History{% endblock %}
-
+{% block stylesheets %} <link rel="stylesheet" href="assets/customerStyle.css">{% endblock %}
 {% block body %}
     <style>
         .example-wrapper {
@@ -16,7 +16,7 @@
             padding: 2px 6px;
         }
     </style>
-    <table class="table">
+    <table class="table .table-hover">
         <tbody>
         <tr>
             <th>Id</th>
