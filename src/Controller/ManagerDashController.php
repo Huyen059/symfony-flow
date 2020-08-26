@@ -10,9 +10,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ManagerDashController extends AbstractController
 {
+    const ROLE_AGENT_SECOND_LINE = 'ROLE_AGENT_SECOND_LINE';
+
     /**
      * @Route("/manager/dash", name="manager_dash", methods={"GET"})
      */
@@ -35,19 +38,31 @@ class ManagerDashController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
 
-    public function newAgent(Request $request)
+    public function newAgent(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
         $agent = new Agent();
         $form = $this->createForm(AgentType::class, $agent);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // encode the plain password
+            $agent->setPassword(
+                $passwordEncoder->encodePassword(
+                    $agent,
+                    $form->get('plainPassword')->getData()
+                )
+            );
+            // Check if agent is second line
+            if($form->get('isSecondLine')){
+                $agent->setIsSecondLine(true);
+                $agent->setRoles([self::ROLE_AGENT_SECOND_LINE]);
+            }
             // Save this ticket to database
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($agent);
             $entityManager->flush();
 
-            return $this->redirectToRoute('ticket_index');
+            return $this->redirectToRoute('manager_dash');
         }
 
         return $this->render('agent/register.html.twig', [

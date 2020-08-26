@@ -14,8 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Agent extends User
 {
-    private int $openTickets;
-    private int $closedTickets;
+    private int $openTickets = 0;
+    private int $closedTickets = 0;
     private int $reopen = 0;
     private bool $isSecondLine = false;
     /**

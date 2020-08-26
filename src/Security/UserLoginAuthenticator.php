@@ -2,6 +2,9 @@
 
 namespace App\Security;
 
+use App\Entity\Agent;
+use App\Entity\Customer;
+use App\Entity\Manager;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -96,7 +99,7 @@ class UserLoginAuthenticator extends AbstractFormLoginAuthenticator implements P
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('customer'));
+        return new RedirectResponse($this->urlGenerator->generate('homepage'));
 //        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 
