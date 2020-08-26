@@ -55,4 +55,30 @@ class ManagerDashController extends AbstractController
             'agentForm' => $form->createView(),
         ]);
     }
+    /**
+     * @Route("/manager/ticket_reset", name="ticket_reset", methods={"GET"})
+     */
+
+    public function endOfDayReset()
+    {
+        $tickets = $this->getDoctrine()
+            ->getRepository(Ticket::class)
+            ->findAll();
+
+        foreach($tickets as $ticket)
+        {
+            if ($ticket->getStatus() !== 3)
+            {
+                $ticket->setStatus(0);
+                $ticket->removeAgent();
+            }
+        }
+        $agents  = $this->getDoctrine()
+            ->getRepository(Agent::class)
+            ->findAll();
+        return $this->render('manager_dash/index.html.twig', [
+            'controller_name' => 'Manager',
+            'agents' => $agents,'tickets' => $tickets]);
+
+    }
 }
