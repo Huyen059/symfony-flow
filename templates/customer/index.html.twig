@@ -40,7 +40,6 @@
                 <td>{{ ticket.priority }}</td>
                 <td>
                     <a href="{{ path('customer_tickets', {'id': ticket.id}) }}">Message History</a>
-
                 </td>
             </tr>
         {% else %}
@@ -48,11 +47,10 @@
                 <td colspan="10">no records found</td>
             </tr>
         {% endfor %}
+        
         </tbody>
     </table>
-
-
-
-
+    <a href="{{ path('ticket_new') }}"> New Ticket</a>
+    
 </div>
 {% endblock %}
