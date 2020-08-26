@@ -14,9 +14,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Agent extends User
 {
+    private int $openTickets;
+    private int $closedTickets;
     private int $reopen = 0;
     private bool $isSecondLine = false;
-
     /**
      * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="agent")
      */
@@ -76,12 +77,46 @@ class Agent extends User
         $this->reopen = $reopen;
     }
 
+    /**
+     * @return int
+     */
+    public function getOpenTickets(): int
+    {
+        return $this->openTickets;
+    }
+
+    /**
+     * @param int $openTickets
+     */
+    public function setOpenTickets(int $openTickets): void
+    {
+        $this->openTickets = $openTickets;
+    }
+
+    /**
+     * @return int
+     */
+    public function getClosedTickets(): int
+    {
+        return $this->closedTickets;
+    }
+
+    /**
+     * @param int $closedTickets
+     */
+    public function setClosedTickets(int $closedTickets): void
+    {
+        $this->closedTickets = $closedTickets;
+    }
+
+
 
     public function addTicket(Ticket $ticket): self
     {
         if (!$this->tickets->contains($ticket)) {
             $this->tickets[] = $ticket;
             $ticket->setAgent($this);
+            $this->openTickets = count($this->tickets);
         }
 
         return $this;
@@ -91,6 +126,7 @@ class Agent extends User
     {
         if ($this->tickets->contains($ticket)) {
             $this->tickets->removeElement($ticket);
+            $this->closedTickets =+ 1;
             // set the owning side to null (unless already changed)
             if ($ticket->getAgent() === $this) {
                 $ticket->setAgent(null);
