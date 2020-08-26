@@ -15,7 +15,7 @@ class AgentController extends AbstractController
     const ROLE_AGENT_SECOND_LINE = 'ROLE_AGENT_SECOND_LINE';
 
     /**
-     * @Route("/agent", name="agent_home", methods={"GET", "POST"})
+     * @Route("/agent/home", name="agent_home", methods={"GET", "POST"})
      */
     public function index(Request $request)
     {
