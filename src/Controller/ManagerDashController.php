@@ -3,12 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Agent;
-use App\Entity\Customer;
-use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Entity\Ticket;
+use App\Form\AgentType;
+use App\Repository\TicketRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Form\UserType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,22 +15,44 @@ class ManagerDashController extends AbstractController
 {
     /**
      * @Route("/manager/dash", name="manager_dash", methods={"GET"})
-     * @param UserRepository $userRepository
-     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function index()
     {
-        $customers = $this->getDoctrine()
-            ->getRepository(Customer::class)
+        $tickets = $this->getDoctrine()
+            ->getRepository(Ticket::class)
             ->findAll();
         $agents  = $this->getDoctrine()
             ->getRepository(Agent::class)
             ->findAll();
-
         return $this->render('manager_dash/index.html.twig', [
             'controller_name' => 'Manager',
-            'customers' => $customers,
-            'agents' => $agents
+            'agents' => $agents,'tickets' => $tickets]);
+    }
+
+    /**
+     * @Route("/manager/new-agent", name="agent_new", methods={"GET","POST"})
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
+
+    public function newAgent(Request $request)
+    {
+        $agent = new Agent();
+        $form = $this->createForm(AgentType::class, $agent);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Save this ticket to database
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($agent);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('ticket_index');
+        }
+
+        return $this->render('agent/register.html.twig', [
+            'agent' => $agent,
+            'agentForm' => $form->createView(),
         ]);
     }
 }
