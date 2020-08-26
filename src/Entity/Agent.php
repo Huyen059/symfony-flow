@@ -76,21 +76,19 @@ class Agent extends User
     {
         $this->reopen = $reopen;
     }
-
-    /**
-     * @return int
-     */
-    public function getOpenTickets(): int
-    {
-        return $this->openTickets;
-    }
-
     /**
      * @param int $openTickets
      */
     public function setOpenTickets(int $openTickets): void
     {
         $this->openTickets = $openTickets;
+    }
+    /**
+     * @return int
+     */
+    public function getOpenTickets(): int
+    {
+        return $this->openTickets;
     }
 
     /**
