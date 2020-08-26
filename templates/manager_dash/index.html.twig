@@ -93,4 +93,40 @@
     <form action="{{ path('ticket_reset') }}">
         <button name="openTickets">Open All Tickets</button>
     </form>
+
+
+    <h1>Customer index</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Email</th>
+
+            <th>Convert</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for customer in customers %}
+            <tr>
+                <td>{{ customer.id }}</td>
+                <td>{{ customer.email }}</td>
+
+                <td>
+                    <form method="post">
+                        <input type="hidden" name="convertToAgent" value="{{ customer.id }}">
+                        <label>Is Second Line?
+                            <input type="checkbox" name="isSecondLine">
+                        </label>
+                        <button type="submit">Convert to Agent</button>
+                    </form>
+                </td>
+
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

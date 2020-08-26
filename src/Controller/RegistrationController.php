@@ -61,15 +61,8 @@ class RegistrationController extends AbstractController
             );
             // do anything else you need here, like send an email
 
-            return $this->redirectToRoute('customer');
+            return $this->redirectToRoute('homepage');
 
-            if ($this->getUser() instanceof Customer) {
-                return $this->redirectToRoute('customer_home');
-            } elseif ($this->getUser() instanceof Agent) {
-                return $this->redirectToRoute('agent_home');
-            } elseif ($this->getUser() instanceof Manager) {
-                return $this->redirectToRoute('manager_dash');
-            }
         }
 
         return $this->render('registration/register.html.twig', [

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Agent;
+use App\Entity\Customer;
 use App\Entity\Ticket;
 use App\Form\AgentType;
 use App\Repository\TicketRepository;
@@ -14,22 +15,50 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ManagerDashController extends AbstractController
 {
-    const ROLE_AGENT_SECOND_LINE = 'ROLE_AGENT_SECOND_LINE';
+    public const ROLE_AGENT_SECOND_LINE = 'ROLE_AGENT_SECOND_LINE';
+    public const ROLE_AGENT = 'ROLE_AGENT';
 
     /**
-     * @Route("/manager/dash", name="manager_dash", methods={"GET"})
+     * @Route("/manager/dash", name="manager_dash", methods={"GET", "POST"})
      */
-    public function index()
+    public function index(Request $request)
     {
+        // If convert a customer to agent
+        if($request->request->get('convertToAgent')) {
+            /** @var Customer $customer */
+            $customer = $this->getDoctrine()->getRepository(Customer::class)->findOneBy(['id' => $request->request->get('convertToAgent')]);
+            $agent = new Agent();
+            $agent->setEmail($customer->getEmail())
+                ->setRoles([self::ROLE_AGENT])
+                ->setPassword($customer->getPassword());
+            // If convert to a second line agent
+            if($request->request->get('isSecondLine')) {
+                $agent->setRoles([self::ROLE_AGENT_SECOND_LINE])
+                    ->setIsSecondLine(true);
+            }
+            // First remove the customer in database
+            $this->getDoctrine()->getManager()->remove($customer);
+            $this->getDoctrine()->getManager()->flush();
+            // Then add new agent with all data from the removed customer
+            $this->getDoctrine()->getManager()->persist($agent);
+            $this->getDoctrine()->getManager()->flush();
+        }
+
         $tickets = $this->getDoctrine()
             ->getRepository(Ticket::class)
             ->findAll();
         $agents  = $this->getDoctrine()
             ->getRepository(Agent::class)
             ->findAll();
+        $customers  = $this->getDoctrine()
+            ->getRepository(Customer::class)
+            ->findAll();
         return $this->render('manager_dash/index.html.twig', [
             'controller_name' => 'Manager',
-            'agents' => $agents,'tickets' => $tickets]);
+            'agents' => $agents,
+            'tickets' => $tickets,
+            'customers' => $customers
+        ]);
     }
 
     /**
@@ -82,9 +111,9 @@ class ManagerDashController extends AbstractController
 
         foreach($tickets as $ticket)
         {
-            if ($ticket->getStatus() !== 3)
+            if ($ticket->getStatus() !== Ticket::CLOSE)
             {
-                $ticket->setStatus(0);
+                $ticket->setStatus(Ticket::OPEN);
                 $ticket->removeAgent();
             }
         }
