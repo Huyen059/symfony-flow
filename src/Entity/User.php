@@ -10,7 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  * @ORM\DiscriminatorMap({"customer" = "Customer", "agent" = "Agent", "manager" = "Manager"})
@@ -175,5 +175,15 @@ abstract class User implements UserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * (Add this method into your class)
+     *
+     * #return string String representation of this class
+     */
+    public function __toString()
+    {
+        return $this->email;
     }
 }
