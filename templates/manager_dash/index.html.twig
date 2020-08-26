@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User index{% endblock %}
+
+{% block body %}
+    <h1>Customer index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Email</th>
+                <th>IsVerified</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for customer in customers %}
+            <tr>
+                <td>{{ customer.id }}</td>
+                <td>{{ customer.email }}</td>
+                <td>{{ customer.isVerified ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('user_show', {'id': customer.id}) }}">show</a>
+                    <a href="{{ path('user_edit', {'id': customer.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h1>Agent index</h1>
+
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Email</th>
+            <th>IsVerified</th>
+            <th>actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for agent in agents %}
+            <tr>
+                <td>{{ agent.id }}</td>
+                <td>{{ agent.email }}</td>
+                <td>{{ agent.isVerified ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('user_show', {'id': agent.id}) }}">show</a>
+                    <a href="{{ path('user_edit', {'id': agent.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ path('user_new') }}">Create new</a>
+{% endblock %}

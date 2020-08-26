@@ -25,6 +25,7 @@ class Customer extends User
      */
     public function __construct()
     {
+        parent::__construct();
         $this->setRoles(["ROLE_CUSTOMER"]);
         $this->tickets = new ArrayCollection();
     }
