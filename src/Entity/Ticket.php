@@ -82,6 +82,11 @@ class Ticket
      */
     private $comments;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $reopen = 0;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -247,6 +252,18 @@ class Ticket
                 $comment->setTicket(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getReopen(): ?int
+    {
+        return $this->reopen;
+    }
+
+    public function setReopen(int $reopen): self
+    {
+        $this->reopen = $reopen;
 
         return $this;
     }

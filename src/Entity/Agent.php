@@ -35,6 +35,7 @@ class Agent extends User
             $this->setRoles(["ROLE_AGENT"]);
         }
         $this->tickets = new ArrayCollection();
+
     }
 
     /**
@@ -124,7 +125,7 @@ class Agent extends User
     {
         if ($this->tickets->contains($ticket)) {
             $this->tickets->removeElement($ticket);
-            $this->closedTickets =+ 1;
+            $this->closedTickets++;
             // set the owning side to null (unless already changed)
             if ($ticket->getAgent() === $this) {
                 $ticket->setAgent(null);
@@ -132,5 +133,38 @@ class Agent extends User
         }
 
         return $this;
+    }
+
+    public function returnOpenTicket() {
+        $count = 0;
+        foreach ($this->tickets as $ticket) {
+            /** @var Ticket $ticket */
+            if($ticket->getStatus() === Ticket::IN_PROGRESS) {
+                $count++;
+            }
+        }
+        return $count;
+    }
+
+    public function returnCloseTicket() {
+        $count = 0;
+        foreach ($this->tickets as $ticket) {
+            /** @var Ticket $ticket */
+            if($ticket->getStatus() === Ticket::CLOSE) {
+                $count++;
+            }
+        }
+        return $count;
+    }
+
+    public function returnReopenTicket() {
+        $count = 0;
+        foreach ($this->tickets as $ticket) {
+            /** @var Ticket $ticket */
+            if($ticket->getReopen()) {
+                $count++;
+            }
+        }
+        return $count;
     }
 }
