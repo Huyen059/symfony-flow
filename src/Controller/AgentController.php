@@ -8,7 +8,10 @@ use App\Entity\Ticket;
 use App\Form\AgentCommentType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 class AgentController extends AbstractController
 {
@@ -16,8 +19,9 @@ class AgentController extends AbstractController
 
     /**
      * @Route("/agent/home", name="agent_home", methods={"GET", "POST"})
+     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
      */
-    public function index(Request $request)
+    public function index(Request $request, MailerInterface $mailer)
     {
         /**
          * @var Agent $agent
@@ -35,6 +39,18 @@ class AgentController extends AbstractController
                 ->setUpdatedDate(new \DateTimeImmutable());
             $this->getDoctrine()->getManager()->persist($ticket);
             $this->getDoctrine()->getManager()->flush();
+
+            $email = (new Email())
+                ->from('becode@test.com')
+                ->to('samihuyen059@gmail.com')
+                ->subject('Your ticket is being handled by us.')
+                ->text('Your ticket is now being handled by one of our agent.');
+            try {
+                $mailer->send($email);
+            }
+            catch (TransportExceptionInterface $e) {
+                $error = $e->getMessage();
+            }
         }
 
         // Get the tickets that match the agent (normal agent: not-escalated ticket, second-line agent: escalated ticket)
@@ -51,7 +67,7 @@ class AgentController extends AbstractController
     /**
      * @Route("/agent/ticket/{id}", name="agent_ticket", methods={"GET", "POST"})
      */
-    public function addComment(Ticket $ticket, Request $request)
+    public function addComment(Ticket $ticket, Request $request, MailerInterface $mailer)
     {
         $error = '';
         /**
@@ -77,6 +93,18 @@ class AgentController extends AbstractController
                 $ticket->setStatus(Ticket::WAITING_FOR_CUSTOMER_FEEDBACK)
                     ->setUpdatedDate(new \DateTimeImmutable());
                 $this->getDoctrine()->getManager()->persist($ticket);
+
+                $email = (new Email())
+                    ->from('becode@test.com')
+                    ->to('samihuyen059@gmail.com')
+                    ->subject('Please give us your feedback')
+                    ->text('Your ticket is handled by one of our agent. Please give us your feedback.');
+                try {
+                    $mailer->send($email);
+                }
+                catch (TransportExceptionInterface $e) {
+                    $error = $e->getMessage();
+                }
             }
 
             $this->getDoctrine()->getManager()->persist($comment);
@@ -92,6 +120,19 @@ class AgentController extends AbstractController
                         ->setUpdatedDate(new \DateTimeImmutable());
                     $this->getDoctrine()->getManager()->persist($ticket);
                     $this->getDoctrine()->getManager()->flush();
+
+                    $email = (new Email())
+                        ->from('becode@test.com')
+                        ->to('samihuyen059@gmail.com')
+                        ->subject('Your ticket has been closed')
+                        ->text('Your ticket is handled by one of our agent. The ticket is now closed.');
+                    try {
+                        $mailer->send($email);
+                    }
+                    catch (TransportExceptionInterface $e) {
+                        $error = $e->getMessage();
+                    }
+
                     return $this->redirectToRoute('agent_ticket', ['id' => $ticket->getId()]);
                 }
             }
@@ -107,6 +148,19 @@ class AgentController extends AbstractController
                 ->setUpdatedDate(new \DateTimeImmutable());
             $this->getDoctrine()->getManager()->persist($ticket);
             $this->getDoctrine()->getManager()->flush();
+
+            $email = (new Email())
+                ->from('becode@test.com')
+                ->to('samihuyen059@gmail.com')
+                ->subject('Your ticket is escalated')
+                ->text('Your ticket will be handled by one of our second line agent.');
+            try {
+                $mailer->send($email);
+            }
+            catch (TransportExceptionInterface $e) {
+                $error = $e->getMessage();
+            }
+
             return $this->redirectToRoute('agent_home');
         }
 

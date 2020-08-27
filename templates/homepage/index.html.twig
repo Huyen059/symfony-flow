@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomepageController!{% endblock %}
+{% block title %}Welcome{% endblock %}
 
 {% block body %}
 <style>
@@ -10,13 +10,28 @@
 
 <div class="example-wrapper">
     <nav class="navbar fixed-top navbar-dark bg-primary">
+    {% if isManager %}
+    <a class="navbar-brand" href="{{ path('manager_dash') }}">Dashboard</a>
+    {% elseif isAgent %}
+    <a class="navbar-brand" href="{{ path('agent_home') }}">Workplace</a>
+    {% elseif isCustomer %}
+    <a class="navbar-brand" href="{{ path('customer_home') }}">Ticket Overview</a>
+    {% else %}
         <a class="navbar-brand ml-auto" href="{{ path('app_login') }}">Login</a>
-        <a class="navbar-brand" href="{{path('app_register')}}">Registrate</a>
+        <a class="navbar-brand" href="{{path('app_register')}}">Register</a>
+    {% endif %}
+    {% if app.user %}
+        <a class="navbar-brand ml-auto"  href="{{ path('app_logout') }}">Logout</a>
+    {% endif %}
     </nav>
-    
-    <img style="margin-top: 145px; margin-left: -50px" src="img/symfony_black.png">
 
-
-
+    {% if app.user %}
+        <div class="my-5 pt-5">
+            <h1>
+                Welcome. You are logged in as {{ app.user.username }}.
+            </h1>
+        </div>
+    {% endif %}
+    <img style="margin-top: 145px; margin-left: -50px" src="img/symfony_black.png" alt="symfony-logo">
 </div>
 {% endblock %}

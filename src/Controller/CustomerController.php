@@ -8,6 +8,9 @@ use App\Form\CommentType;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CustomerController extends AbstractController
@@ -29,7 +32,7 @@ class CustomerController extends AbstractController
     /**
      * @Route("/customer/tickets/{id}", name="customer_tickets")
      */
-    public function customerTickets(Ticket $ticket, Request $request)
+    public function customerTickets(Ticket $ticket, Request $request, MailerInterface $mailer)
     {
         $comment = new Comment();
         $comment->setUser($this->getUser());
@@ -42,6 +45,19 @@ class CustomerController extends AbstractController
             $ticket->setUpdatedDate(new \DateTimeImmutable());
             if ($ticket->getStatus() === Ticket::WAITING_FOR_CUSTOMER_FEEDBACK) {
                 $ticket->setStatus(Ticket::IN_PROGRESS);
+
+                $email = (new Email())
+                    ->from('becode@test.com')
+                    ->to('samihuyen059@gmail.com')
+                    ->subject('Customer has posted their feedback.')
+                    ->text('Customer has posted their feedback. Please review/answer this new feedback.');
+                try {
+                    $mailer->send($email);
+                }
+                catch (TransportExceptionInterface $e) {
+                    $error = $e->getMessage();
+                }
+
             }
 
             $this->getDoctrine()->getManager()->persist($comment);
