@@ -44,6 +44,13 @@
     </div>
     <section>
         <h1 class="h1 my-5 font-weight-normal text-center">All open tickets</h1>
+        <div>
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
         <table class="table" style="width: 80vw">
             <thead class="thead-dark">
             <tr>

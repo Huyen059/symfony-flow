@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CustomerController extends AbstractController
 {
     /**
-     * @Route("/customer", name="customer_home")
+     * @Route("/customer", name="customer_home", methods={"GET"})
      */
     public function index()
     {
@@ -59,7 +59,7 @@ class CustomerController extends AbstractController
     }
 
     /**
-     * @Route("/customer/tickets/addComment/{id}", name="customer_ticket_add_comment")
+     * @Route("/customer/tickets/addComment/{id}", name="customer_ticket_add_comment", methods={"POST"})
      */
     public function addComment(Ticket $ticket, Request $request, MailerInterface $mailer)
     {
@@ -81,7 +81,7 @@ class CustomerController extends AbstractController
             try {
                 $mailer->send($email);
             } catch (TransportExceptionInterface $e) {
-                $this->addFlash('error', 'Your email address has not been sent.');
+                $this->addFlash('error', 'Your email has not been sent.');
             }
 
         }
@@ -94,7 +94,7 @@ class CustomerController extends AbstractController
     }
 
     /**
-     * @Route("/customer/tickets/reopen/{id}", name="customer_ticket_reopen")
+     * @Route("/customer/tickets/reopen/{id}", name="customer_ticket_reopen", methods={"POST"})
      */
     public function reOpen(Ticket $ticket)
     {
