@@ -8,6 +8,9 @@ use App\Entity\Ticket;
 use App\Form\AgentType;
 use App\Repository\TicketRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +24,7 @@ class ManagerDashController extends AbstractController
     /**
      * @Route("/manager/dash", name="manager_dash", methods={"GET", "POST"})
      */
-    public function index(Request $request)
+    public function index(Request $request, MailerInterface $mailer)
     {
         // If convert a customer to agent
         if($request->request->get('convertToAgent')) {
@@ -42,6 +45,18 @@ class ManagerDashController extends AbstractController
             // Then add new agent with all data from the removed customer
             $this->getDoctrine()->getManager()->persist($agent);
             $this->getDoctrine()->getManager()->flush();
+            // Send email to ask them to change password
+            $email = (new Email())
+                ->from('becode@test.com')
+                ->to($agent->getEmail())
+                ->subject('Please change your password')
+                ->text('You has been changed from customer to agent. Please change your password.');
+            try {
+                $mailer->send($email);
+            }
+            catch (TransportExceptionInterface $e) {
+                $error = $e->getMessage();
+            }
         }
 
         // if reassign agent
