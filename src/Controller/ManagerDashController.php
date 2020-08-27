@@ -118,7 +118,6 @@ class ManagerDashController extends AbstractController
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-
     public function newAgent(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
         $agent = new Agent();
@@ -151,10 +150,10 @@ class ManagerDashController extends AbstractController
             'agentForm' => $form->createView(),
         ]);
     }
-    /**
-     * @Route("/manager/ticket_reset", name="ticket_reset", methods={"GET"})
-     */
 
+    /**
+     * @Route("/manager/ticket_reset", name="ticket_reset", methods={"POST"})
+     */
     public function endOfDayReset()
     {
         $tickets = $this->getDoctrine()
@@ -167,14 +166,11 @@ class ManagerDashController extends AbstractController
             {
                 $ticket->setStatus(Ticket::OPEN);
                 $ticket->removeAgent();
+                $this->getDoctrine()->getManager()->persist($ticket);
+                $this->getDoctrine()->getManager()->flush();
             }
         }
-        $agents  = $this->getDoctrine()
-            ->getRepository(Agent::class)
-            ->findAll();
-        return $this->render('manager_dash/index.html.twig', [
-            'controller_name' => 'Manager',
-            'agents' => $agents,'tickets' => $tickets]);
 
+        return $this->redirectToRoute('manager_dash');
     }
 }
