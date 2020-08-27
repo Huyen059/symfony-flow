@@ -1,56 +1,92 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Customer Comments{% endblock %}
-
+{% block title %}Your Tickets{% endblock %}
+{% block stylesheets %} <link rel="stylesheet" href="assets/customerStyle.css">{% endblock %}
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <style>
+        .example-wrapper {
+            margin: 1em auto;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 sans-serif;
+        }
 
-<div class="example-wrapper">
-    <h1>Your Ticket history</h1>
+        .example-wrapper code {
+            background: #F5F5F5;
+            padding: 2px 6px;
+        }
+    </style>
+    {% block header %}
+        <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
+            <a class="navbar-brand" href="#"><img class="nav-logo" src="img/symfony_black.png" alt="Symfony logo"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>Title</th>
-            <th>Content</th>
-            <th>Status</th>
-            <th>CreatedDate</th>
-            <th>UpdatedDate</th>
-            <th>IsEscalated</th>
-            <th>CloseReason</th>
-            <th>Priority</th>
-            <th>actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for ticket in tickets %}
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item ">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Your Tickets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    {% endblock %}
+
+    <div class="example-wrapper rounded">
+        <h1>Your Tickets</h1>
+        <br>
+
+        <table class="table table-hover rounded">
+            <thead>
             <tr>
-                <td>{{ ticket.id }}</td>
-                <td>{{ ticket.title }}</td>
-                <td>{{ ticket.content }}</td>
-                <td>{{ ticket.status }}</td>
-                <td>{{ ticket.createdDate ? ticket.createdDate|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ ticket.updatedDate ? ticket.updatedDate|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ ticket.isEscalated ? 'Yes' : 'No' }}</td>
-                <td>{{ ticket.closeReason }}</td>
-                <td>{{ ticket.priority }}</td>
-                <td>
-                    <a href="{{ path('customer_tickets', {'id': ticket.id}) }}">Message History</a>
-                </td>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>CreatedDate</th>
+                <th>UpdatedDate</th>
+                <th>CloseReason</th>
+                <th>actions</th>
             </tr>
-        {% else %}
-            <tr>
-                <td colspan="10">no records found</td>
-            </tr>
-        {% endfor %}
-        
-        </tbody>
-    </table>
-    <a href="{{ path('ticket_new') }}"> New Ticket</a>
-    
-</div>
+            </thead>
+            <tbody class="table table-hover">
+            {% for ticket in tickets %}
+                <tr>
+                    <td>{{ ticket.id }}</td>
+                    <td>{{ ticket.title }}</td>
+                    <td>{{ ticket.status }}</td>
+                    <td>{{ ticket.createdDate ? ticket.createdDate|date('Y-m-d H:i:s') : '' }}</td>
+                    <td>{{ ticket.updatedDate ? ticket.updatedDate|date('Y-m-d H:i:s') : '' }}</td>
+                    <td>{{ ticket.closeReason }}</td>
+                    <td>
+                        <button class="btn btn-info">
+                            <a href="{{ path('customer_tickets', {'id': ticket.id}) }}">Message History</a>
+                        </button>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="10">no records found</td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+        <button class="btn btn-primary">
+            <a href="{{ path('ticket_new') }}"> New Ticket</a>
+        </button>
+    </div>
+
+
+
+
+    {% block footer %}
+        <hr><div class="footer ">Huyen & Underlings ltd. &copy; Becode</div>
+    {% endblock %}
 {% endblock %}
