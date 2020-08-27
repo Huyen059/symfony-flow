@@ -44,6 +44,35 @@ class ManagerDashController extends AbstractController
             $this->getDoctrine()->getManager()->flush();
         }
 
+        // if reassign agent
+        if($request->request->get('reassignAgent')) {
+            $ticket = $this->getDoctrine()->getRepository(Ticket::class)->findOneBy(['id' => $request->request->get('ticketId')]);
+            $agent = $this->getDoctrine()->getRepository(Agent::class)->findOneBy(['id' => $request->request->get('reassignAgent')]);
+            $ticket->setAgent($agent)
+                ->setUpdatedDate(new \DateTimeImmutable())
+                ->setStatus(Ticket::IN_PROGRESS);
+            $this->getDoctrine()->getManager()->persist($ticket);
+            $this->getDoctrine()->getManager()->flush();
+        }
+
+        // if set Priority
+        if($request->request->get('setPriority') !== null) {
+            $ticket = $this->getDoctrine()->getRepository(Ticket::class)->findOneBy(['id' => $request->request->get('ticketId')]);
+            $ticket->setPriority($request->request->get('setPriority'));
+            $this->getDoctrine()->getManager()->persist($ticket);
+            $this->getDoctrine()->getManager()->flush();
+        }
+
+        // if won't fix
+        if($request->request->get('closeReason')) {
+            $ticket = $this->getDoctrine()->getRepository(Ticket::class)->findOneBy(['id' => $request->request->get('ticketId')]);
+            $ticket->setCloseReason($request->request->get('closeReason'))
+                ->setStatus(Ticket::CLOSE)
+                ->setUpdatedDate(new \DateTimeImmutable());
+            $this->getDoctrine()->getManager()->persist($ticket);
+            $this->getDoctrine()->getManager()->flush();
+        }
+
         $tickets = $this->getDoctrine()
             ->getRepository(Ticket::class)
             ->findAll();
@@ -57,7 +86,15 @@ class ManagerDashController extends AbstractController
             'controller_name' => 'Manager',
             'agents' => $agents,
             'tickets' => $tickets,
-            'customers' => $customers
+            'customers' => $customers,
+            'high_priority' => Ticket::HIGH_PRIORITY,
+            'medium_priority' => Ticket::MEDIUM_PRIORITY,
+            'low_priority' => Ticket::LOW_PRIORITY,
+            'role_agent_second_line' => self::ROLE_AGENT_SECOND_LINE,
+            'open' => Ticket::OPEN,
+            'in_progress' => Ticket::IN_PROGRESS,
+            'waiting_feedback' => Ticket::WAITING_FOR_CUSTOMER_FEEDBACK,
+            'close' => Ticket::CLOSE,
         ]);
     }
 
