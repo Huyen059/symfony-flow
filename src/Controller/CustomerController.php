@@ -34,70 +34,81 @@ class CustomerController extends AbstractController
     }
 
     /**
-     * @Route("/customer/tickets/{id}", name="customer_tickets")
+     * @Route("/customer/tickets/{id}", name="customer_tickets", methods={"GET"})
      */
-    public function customerTickets(Ticket $ticket, Request $request, MailerInterface $mailer)
+    public function customerTickets(Ticket $ticket)
     {
         $style = __DIR__ . "/../../public/assets/customerStyle.css";
         $comment = new Comment();
         $comment->setUser($this->getUser());
         $comment->setTicket($ticket);
-        $error = "";
 
-        $form = $this->createForm(CommentType::class, $comment);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $ticket->setUpdatedDate(new \DateTimeImmutable());
-            if ($ticket->getStatus() === Ticket::WAITING_FOR_CUSTOMER_FEEDBACK) {
-                $ticket->setStatus(Ticket::IN_PROGRESS);
-
-                $email = (new Email())
-                    ->from('becode@test.com')
-                    ->to('samihuyen059@gmail.com')
-                    ->subject('Customer has posted their feedback.')
-                    ->text('Customer has posted their feedback. Please review/answer this new feedback.');
-                try {
-                    $mailer->send($email);
-                }
-                catch (TransportExceptionInterface $e) {
-                    $error = $e->getMessage();
-                }
-
-            }
-
-            $this->getDoctrine()->getManager()->persist($comment);
-            $this->getDoctrine()->getManager()->persist($ticket);
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('customer_tickets', ['id' => $ticket->getId()]);
-
-        }
-        if ($request->request->get('reOpen')) {
-            /** @var \DateTimeImmutable $update */
-            $update = $ticket->getUpdatedDate();
-            if ($update->add(new \DateInterval("PT1H")) >= new \DateTimeImmutable() && $ticket->getCloseReason() === null) {
-                $ticket->setStatus(Ticket::IN_PROGRESS);
-                $ticket->setReopen($ticket->getReopen() + 1);
-                $this->getDoctrine()->getManager()->persist($ticket);
-                $this->getDoctrine()->getManager()->flush();
-                return $this->redirectToRoute('customer_tickets', ['id' => $ticket->getId()]);
-            }
-            $error = " You can no longer Re-open a case after it has expired or is permanently closed by manager.";
-
-
-        }
-
+        $form = $this->createForm(CommentType::class, $comment,
+            ['action' => $this->generateUrl('customer_ticket_add_comment', ['id' => $ticket->getId()])]
+        );
 
         return $this->render('customer/customerTickets.html.twig', [
             'form' => $form->createView(),
             'ticket' => $ticket,
             'close' => Ticket::CLOSE,
-            'error' => $error,
             'style' => $style,
             'open' => Ticket::OPEN,
             'in_progress' => Ticket::IN_PROGRESS,
             'waiting_feedback' => Ticket::WAITING_FOR_CUSTOMER_FEEDBACK,
         ]);
+    }
+
+    /**
+     * @Route("/customer/tickets/addComment/{id}", name="customer_ticket_add_comment")
+     */
+    public function addComment(Ticket $ticket, Request $request, MailerInterface $mailer)
+    {
+        $form = $request->request->get('comment');
+        $comment = new Comment();
+        $comment->setTitle($form['title'])
+            ->setTicket($ticket)
+            ->setUser($this->getUser())
+            ->setContent($form['content']);
+        $ticket->setUpdatedDate(new \DateTimeImmutable());
+        if ($ticket->getStatus() === Ticket::WAITING_FOR_CUSTOMER_FEEDBACK) {
+            $ticket->setStatus(Ticket::IN_PROGRESS);
+
+            $email = (new Email())
+                ->from('becode@test.com')
+                ->to('samihuyen059@gmail.com')
+                ->subject('Customer has posted their feedback.')
+                ->text('Customer has posted their feedback. Please review/answer this new feedback.');
+            try {
+                $mailer->send($email);
+            } catch (TransportExceptionInterface $e) {
+                $this->addFlash('error', 'Your email address has not been sent.');
+            }
+
+        }
+
+        $this->getDoctrine()->getManager()->persist($comment);
+        $this->getDoctrine()->getManager()->persist($ticket);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->redirectToRoute('customer_tickets', ['id' => $ticket->getId()]);
+    }
+
+    /**
+     * @Route("/customer/tickets/reopen/{id}", name="customer_ticket_reopen")
+     */
+    public function reOpen(Ticket $ticket)
+    {
+        /** @var \DateTimeImmutable $update */
+        $update = $ticket->getUpdatedDate();
+        if ($update->add(new \DateInterval("PT1H")) >= new \DateTimeImmutable() && $ticket->getCloseReason() === null) {
+            $ticket->setStatus(Ticket::IN_PROGRESS);
+            $ticket->setReopen($ticket->getReopen() + 1);
+            $this->getDoctrine()->getManager()->persist($ticket);
+            $this->getDoctrine()->getManager()->flush();
+            return $this->redirectToRoute('customer_tickets', ['id' => $ticket->getId()]);
+        }
+        $this->addFlash('error', 'You can no longer Re-open a case after it has expired or is permanently closed by manager.');
+        return $this->redirectToRoute('customer_tickets', ['id' => $ticket->getId()]);
     }
 
 }

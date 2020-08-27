@@ -53,9 +53,16 @@
     {% endblock %}
     <h1 class="h1 my-5 font-weight-normal text-center">Ticket Details</h1>
     <hr class="w-50 mx-auto">
+    <div>
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
     {% if ticket.status == close %}
         <div class="border border-info p-2 mx-auto mb-3 d-flex rounded">
-            <form method="post" class="w-100">
+            <form method="post" action="{{ path('customer_ticket_reopen', { 'id': ticket.id }) }}" class="w-100">
                 <input type="hidden" name="reOpen" value="{{ ticket.id }}">
                 <button type="submit" class="btn btn-primary ">Re-open Case</button>
             </form>
@@ -130,18 +137,9 @@
             </div>
         {% endfor %}
     </div>
-    <div>
-        {% if error %}
-            <div class="alert alert-danger" role="alert">
-                {{ error }}
-            </div>
-        {% endif %}
-    </div>
+
     {% if ticket.status != close %}
         <h1 class="h1 my-5 font-weight-normal text-center">Add New Comments</h1>
-
-
-
         <div class="card bg-light mb-3 p-4 border border-primary" style="width: 60rem;">
             {{ form_start(form) }}
             {{ form_row(form.title) }}
