@@ -54,7 +54,7 @@
         {% if ticket.status != close %}
             <div class="d-flex">
                 <div class="border border-info p-2 mx-auto mb-3 d-flex rounded">
-                    <form method="post" class="w-100">
+                    <form method="post" action="{{ path('agent_ticket_close', {'id': ticket.id }) }}" class="w-100">
                         <input type="hidden" name="closeTicket" value="{{ ticket.id }}">
                         <button type="submit" class="btn btn-primary w-100">Close this ticket</button>
                     </form>
@@ -62,7 +62,7 @@
                 {# Only first line agent can escalate a ticket #}
                 {% if not agent.isSecondLine %}
                     <div class="border border-info p-2 mx-auto mb-3 d-flex rounded">
-                        <form method="post" class="w-100">
+                        <form method="post" action="{{ path('agent_ticket_escalate', {'id' : ticket.id }) }}" class="w-100">
                             <input type="hidden" name="escalateTicket" value="{{ ticket.id }}">
                             <button type="submit" class="btn btn-primary w-100">Escalate this ticket</button>
                         </form>
