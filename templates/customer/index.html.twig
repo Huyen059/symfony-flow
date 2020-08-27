@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Your Tickets{% endblock %}
-{% block stylesheets %} <link rel="stylesheet" href="assets/customerStyle.css">{% endblock %}
+{% block stylesheets %}<link rel="stylesheet" href="assets/customerStyle.css">{% endblock %}
 {% block body %}
     <style>
         .example-wrapper {
@@ -26,10 +26,10 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item ">
-                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="{{ path('homepage') }}">Home <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="#">Your Tickets</a>
+                       {# <a class="nav-link" href="{{ path('customer') }}">Your Tickets</a> #}
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Logout</a>
@@ -41,8 +41,10 @@
 
     <div class="example-wrapper rounded">
         <h1>Your Tickets</h1>
-        <br>
-
+        <button class="btn btn-primary ">
+            <a href="{{ path('ticket_new') }}"> New Ticket</a>
+        </button>
+        <h1></h1>
         <table class="table table-hover rounded">
             <thead>
             <tr>
@@ -78,9 +80,7 @@
 
             </tbody>
         </table>
-        <button class="btn btn-primary">
-            <a href="{{ path('ticket_new') }}"> New Ticket</a>
-        </button>
+
     </div>
 
 
