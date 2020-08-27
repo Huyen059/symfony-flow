@@ -83,10 +83,11 @@
                 <td>{{ ticket.updatedDate|date("F jS \\a\\t g:ia") }}</td>
                 <td>{{ ticket.isEscalated ? 'Yes' : 'No' }}</td>
                 <td>
-                    {% if ticket.status != close %}
+
                         {% if ticket.closeReason %}
                             {{ ticket.closeReason }}
                         {% else %}
+                            {% if ticket.status != close %}
                             <form method="post">
                                 <input type="hidden" name="ticketId" value="{{ ticket.id }}">
                                 <label>
@@ -94,8 +95,9 @@
                                 </label>
                                 <button type="submit">Won't Fix</button>
                             </form>
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
+
                 </td>
             </tr>
         {% else %}
