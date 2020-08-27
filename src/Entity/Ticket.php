@@ -153,6 +153,13 @@ class Ticket
         return $this;
     }
 
+    public function removeAgent(): self
+    {
+        $this->agent = null;
+
+        return $this;
+    }
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;

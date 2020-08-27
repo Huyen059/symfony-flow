@@ -13,6 +13,7 @@
                 <th>Content</th>
                 <th>Customer Id</th>
                 <th>Agent Id</th>
+                <th>Status</th>
                 <th>Priority</th>
                 <th>Creation date</th>
                 <th>Update date</th>
@@ -28,6 +29,7 @@
                 <td>{{ ticket.content }}</td>
                 <td>{{ ticket.customer }}</td>
                 <td>{{ ticket.agent }}</td>
+                <td>{{ ticket.status }}</td>
                 <td>{{ ticket.priority }}</td>
                 <td>{{ ticket.createdDate|date("F jS \\a\\t g:ia") }}</td>
                 <td>{{ ticket.updatedDate|date("F jS \\a\\t g:ia") }}</td>
@@ -88,7 +90,43 @@
     <a href="{{ path('agent_new') }}">Create new</a>
 
     <h1>Ticket Control</h1>
-    <form action="index.html.twig" method="POST">
+    <form action="{{ path('ticket_reset') }}">
         <button name="openTickets">Open All Tickets</button>
     </form>
+
+
+    <h1>Customer index</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Email</th>
+
+            <th>Convert</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for customer in customers %}
+            <tr>
+                <td>{{ customer.id }}</td>
+                <td>{{ customer.email }}</td>
+
+                <td>
+                    <form method="post">
+                        <input type="hidden" name="convertToAgent" value="{{ customer.id }}">
+                        <label>Is Second Line?
+                            <input type="checkbox" name="isSecondLine">
+                        </label>
+                        <button type="submit">Convert to Agent</button>
+                    </form>
+                </td>
+
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

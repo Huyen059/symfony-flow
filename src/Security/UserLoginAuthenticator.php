@@ -2,6 +2,9 @@
 
 namespace App\Security;
 
+use App\Entity\Agent;
+use App\Entity\Customer;
+use App\Entity\Manager;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
