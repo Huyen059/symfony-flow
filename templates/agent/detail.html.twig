@@ -22,9 +22,52 @@
         {#    If there's an error, it will be display here    #}
         <p>{{ error|default('') }}</p>
         {#    Table containing information of the current ticket    #}
-        <table class="table">
+        <section class="table">
             <tbody>
-            <tr>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="row">Id</th>
+                    <th>{{ ticket.id }}</th>
+               </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">Title</th>
+                    <td>{{ ticket.title }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Content</th>
+                    <td>{{ ticket.content }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Status</th>
+                    <td>{{ ticket.status }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">CreatedDate</th>
+                    <td>{{ ticket.createdDate ? ticket.createdDate|date('Y-m-d H:i:s') : '' }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">UpdatedDate</th>
+                    <td>{{ ticket.updatedDate ? ticket.updatedDate|date('Y-m-d H:i:s') : '' }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">IsEscalated</th>
+                    <td>{{ ticket.isEscalated ? 'Yes' : 'No' }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">CloseReason</th>
+                    <td>{{ ticket.closeReason }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Priority</th>
+                    <td>{{ ticket.priority }}</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!--<tr>
                 <th>Id</th>
                 <td>{{ ticket.id }}</td>
             </tr>
@@ -61,8 +104,9 @@
                 <td>{{ ticket.priority }}</td>
             </tr>
             </tbody>
-        </table>
+        </table>-->
     </section>
+
 
     {#  All comments of the current tickets  #}
     <section class="example-wrapper">
@@ -86,13 +130,15 @@
             <h1>Add new comment</h1>
             {{ form_start(form) }}
             {{ form_widget(form) }}
-            <button type="submit">Add Comment</button>
+            <button type="submit" class="btn btn-primary">Add Comment</button>
+            <!--<button type="submit">Add Comment</button>-->
             {{ form_end(form) }}
         </section>
         <section class="example-wrapper">
             <form method="post">
                 <input type="hidden" name="closeTicket" value="{{ ticket.id }}">
-                <button type="submit">Close this ticket</button>
+                <!--<button type="submit">Close this ticket</button>-->
+                <button type="submit" class="btn btn-primary">Close this ticket</button>
             </form>
         </section>
         {#  Only first line agent can escalate a ticket      #}
@@ -100,7 +146,8 @@
             <section class="example-wrapper">
                 <form method="post">
                     <input type="hidden" name="escalateTicket" value="{{ ticket.id }}">
-                    <button type="submit">Escalate this ticket</button>
+                    <button type="submit" class="btn btn-primary">Escalate this ticket</button>
+                    <!--<button type="submit">Escalate this ticket</button>-->
                 </form>
             </section>
         {% endif %}
