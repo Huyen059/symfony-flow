@@ -34,6 +34,7 @@ class CustomerController extends AbstractController
      */
     public function customerTickets(Ticket $ticket, Request $request, MailerInterface $mailer)
     {
+        $style = __DIR__ . "/../../public/assets/customerStyle.css";
         $comment = new Comment();
         $comment->setUser($this->getUser());
         $comment->setTicket($ticket);
@@ -87,7 +88,8 @@ class CustomerController extends AbstractController
             'form' => $form->createView(),
             'ticket' => $ticket,
             'close' => Ticket::CLOSE,
-            'error' => $error
+            'error' => $error,
+            'style' => $style
         ]);
     }
 

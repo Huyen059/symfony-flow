@@ -37,3 +37,8 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+         - { path: ^/agent, roles: ROLE_AGENT }
+         - { path: ^/customer, roles: ROLE_CUSTOMER }
+         - { path: ^/ticket/new, roles: ROLE_CUSTOMER }
+         - { path: ^/ticket/\d, roles: ROLE_MANAGER }
+         - { path: ^/manager, roles: ROLE_MANAGER }

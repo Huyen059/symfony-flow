@@ -1,89 +1,118 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/customerStyle.css') }}">{% endblock %}
+
 {% block title %}Message History{% endblock %}
-{% block stylesheets %} <link rel="stylesheet" href="assets/customerStyle.css">{% endblock %}
+
 {% block body %}
-    <style>
-        .example-wrapper {
-            margin: 1em auto;
-            max-width: 800px;
-            width: 95%;
-            font: 18px/1.5 sans-serif;
-        }
+<style>
+    .example-wrapper {
+        margin: 1em auto;
+        max-width: 800px;
+        width: 95%;
+        font: 18px/1.5 sans-serif;
+    }
 
-        .example-wrapper code {
-            background: #F5F5F5;
-            padding: 2px 6px;
-        }
-    </style>
-    <table class="table .table-hover">
-        <tbody>
-        <tr>
-            <th>Id</th>
-            <td>{{ ticket.id }}</td>
-        </tr>
-        <tr>
-            <th>Title</th>
-            <td>{{ ticket.title }}</td>
-        </tr>
-        <tr>
-            <th>Content</th>
-            <td>{{ ticket.content }}</td>
-        </tr>
-        <tr>
-            <th>Status</th>
-            <td>{{ ticket.status }}</td>
-        </tr>
-        <tr>
-            <th>CreatedDate</th>
-            <td>{{ ticket.createdDate ? ticket.createdDate|date('Y-m-d H:i:s') : '' }}</td>
-        </tr>
-        <tr>
-            <th>UpdatedDate</th>
-            <td>{{ ticket.updatedDate ? ticket.updatedDate|date('Y-m-d H:i:s') : '' }}</td>
-        </tr>
-        <tr>
-            <th>IsEscalated</th>
-            <td>{{ ticket.isEscalated ? 'Yes' : 'No' }}</td>
-        </tr>
-        <tr>
-            <th>CloseReason</th>
-            <td>{{ ticket.closeReason }}</td>
-        </tr>
-        <tr>
-            <th>Priority</th>
-            <td>{{ ticket.priority }}</td>
-        </tr>
-        </tbody>
-    </table>
+    .example-wrapper code {
+        background: #F5F5F5;
+        padding: 2px 6px;
+    }
+</style>
+{% block header %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
+        <a class="navbar-brand" href="#"><img class="nav-logo" src="{{ asset('img/symfony_black.png') }}"
+                                              alt="Symfony logo"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <h1>Message History</h1>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item ">
+                    <a class="nav-link" href="{{ path('homepage') }}">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="{{ path('customer_home') }}">Your Tickets</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ path('customer_tickets', {'id': ticket.id}) }}">Ticket Information</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_logout') }}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+{% endblock %}
+<h1>Ticket Details</h1>
+<table class="table table-hover rounded table-sm summary border border-primary">
+    <tbody>
+    <tr>
+        <th>Id</th>
+        <td>{{ ticket.id }}</td>
+    </tr>
+    <tr>
+        <th>Title</th>
+        <td>{{ ticket.title }}</td>
+    </tr>
+    <tr>
+        <th>Content</th>
+        <td>{{ ticket.content }}</td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>{{ ticket.status }}</td>
+    </tr>
+    <tr>
+        <th>CreatedDate</th>
+        <td>{{ ticket.createdDate ? ticket.createdDate|date('Y-m-d H:i:s') : '' }}</td>
+    </tr>
+    <tr>
+        <th>UpdatedDate</th>
+        <td>{{ ticket.updatedDate ? ticket.updatedDate|date('Y-m-d H:i:s') : '' }}</td>
+    </tr>
+    <tr>
+        <th>IsEscalated</th>
+        <td>{{ ticket.isEscalated ? 'Yes' : 'No' }}</td>
+    </tr>
+    <tr>
+        <th>CloseReason</th>
+        <td>{{ ticket.closeReason }}</td>
+    </tr>
+    </tbody>
+</table>
 
-    {% for comment in ticket.comments %}
+<h1>Message History</h1>
+
+{% for comment in ticket.comments %}
         {% if not comment.isPrivate %}
-            <div><h3>{{ comment.title }}</h3>
-                <p>{{ comment.content }}</p></div>
-        {% endif %}
+
+<div class="card bg-light mb-3 p-1 border border-primary" style="max-width: 18rem;">
+        <p class="card-text">{{ comment.content }}</p>
+    </div>
+    {% endif %}
     {% else %}
-        <p>No Message history yet</p>
+        <div class="card bg-light mb-3 p-1 border border-primary" style="max-width: 18rem;">
+            <p class="card-text">No Message history so far</p>
+        </div>
     {% endfor %}
 
     <div> {{ error }}</div>
     {% if ticket.status != close %}
-        <div>
+        <div class="card bg-light mb-3 p-1 border border-primary" style="max-width: 20rem;">
             {{ form_start(form) }}
             {{ form_row(form.title) }}
             {{ form_row(form.content) }}
-            <button type="submit"> Add Comment</button>
+            <button type="submit" class="btn btn-primary ">Add Comment</button>
             {{ form_end(form) }}
         </div>
     {% else %}
         <form method="post">
             <input type="hidden" name="reOpen" value="{{ ticket.id }}">
-            <button type="submit"> Re-open Case</button>
+            <button type="submit" class="btn btn-primary ">Re-open Case</button>
         </form>
     {% endif %}
 
-
-
-{% endblock %}
+    {% endblock %}
