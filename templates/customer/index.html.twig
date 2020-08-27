@@ -46,30 +46,42 @@
         </div>
     {% endblock %}
 
-    <div class="example-wrapper rounded">
-        <h1>Your Tickets</h1>
-        <button class="btn btn-primary ">
-            <a href="{{ path('ticket_new') }}"> New Ticket</a>
-        </button>
-        <h1></h1>
+    <div class="rounded">
+        <h1 class="h1 my-5 font-weight-normal text-center">Your Tickets</h1>
+
+        <hr class="w-50 mx-auto">
+        <div class="border border-info p-2 mx-auto mb-3 w-25 d-flex rounded">
+            <a class="btn btn-primary w-100" href="{{ path('ticket_new') }}"> New Ticket</a>
+        </div>
+
         <table class="table table-hover rounded">
             <thead>
             <tr>
                 <th>Id</th>
                 <th>Title</th>
                 <th>Status</th>
-                <th>CreatedDate</th>
-                <th>UpdatedDate</th>
-                <th>CloseReason</th>
-                <th>actions</th>
+                <th>Created Date</th>
+                <th>Updated Date</th>
+                <th>Close Reason</th>
+                <th>Details</th>
             </tr>
             </thead>
             <tbody class="table table-hover">
             {% for ticket in tickets %}
                 <tr>
                     <td>{{ ticket.id }}</td>
-                    <td>{{ ticket.title }}</td>
-                    <td>{{ ticket.status }}</td>
+                    <td>{{ ticket.title|capitalize }}</td>
+                    <td>
+                        {% if ticket.status == open %}
+                            Open
+                        {% elseif ticket.status == in_progress %}
+                            In progress
+                        {% elseif ticket.status == waiting_feedback %}
+                            Waiting for customer feedback
+                        {% else %}
+                            Close
+                        {% endif %}
+                    </td>
                     <td>{{ ticket.createdDate ? ticket.createdDate|date('Y-m-d H:i:s') : '' }}</td>
                     <td>{{ ticket.updatedDate ? ticket.updatedDate|date('Y-m-d H:i:s') : '' }}</td>
                     <td>{{ ticket.closeReason }}</td>
@@ -81,7 +93,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="10">no records found</td>
+                    <td colspan="7">No records found</td>
                 </tr>
             {% endfor %}
 

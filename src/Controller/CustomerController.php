@@ -25,6 +25,10 @@ class CustomerController extends AbstractController
 
         return $this->render('customer/index.html.twig', [
             'tickets' => $tickets,
+            'open' => Ticket::OPEN,
+            'in_progress' => Ticket::IN_PROGRESS,
+            'waiting_feedback' => Ticket::WAITING_FOR_CUSTOMER_FEEDBACK,
+            'close' => Ticket::CLOSE,
         ]);
 
     }
@@ -89,7 +93,10 @@ class CustomerController extends AbstractController
             'ticket' => $ticket,
             'close' => Ticket::CLOSE,
             'error' => $error,
-            'style' => $style
+            'style' => $style,
+            'open' => Ticket::OPEN,
+            'in_progress' => Ticket::IN_PROGRESS,
+            'waiting_feedback' => Ticket::WAITING_FOR_CUSTOMER_FEEDBACK,
         ]);
     }
 

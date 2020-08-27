@@ -15,10 +15,10 @@ class TicketType extends AbstractType
     {
         $builder
             ->add('title', TextType::class, [
-                'attr' => ['class' => 'form-group']
+                'attr' => ['class' => 'form-group w-100']
             ])
             ->add('content', TextareaType::class, [
-                'attr' => ['class' => 'form-group']
+                'attr' => ['class' => 'form-group w-100']
             ])
 //            ->add('status')
 //            ->add('createdDate')

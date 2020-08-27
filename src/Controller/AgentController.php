@@ -60,7 +60,12 @@ class AgentController extends AbstractController
             'tickets' => $tickets,
             'agent' => $agent,
             'open' => Ticket::OPEN,
+            'in_progress' => Ticket::IN_PROGRESS,
+            'waiting_feedback' => Ticket::WAITING_FOR_CUSTOMER_FEEDBACK,
             'close' => Ticket::CLOSE,
+            'high_priority' => Ticket::HIGH_PRIORITY,
+            'medium_priority' => Ticket::MEDIUM_PRIORITY,
+            'low_priority' => Ticket::LOW_PRIORITY,
         ]);
     }
 
@@ -167,9 +172,15 @@ class AgentController extends AbstractController
         return $this->render('agent/detail.html.twig', [
             'ticket' => $ticket,
             'form' => $form->createView(),
-            'close' => Ticket::CLOSE,
             'error' => $error,
-            'agent' => $agent
+            'agent' => $agent,
+            'open' => Ticket::OPEN,
+            'in_progress' => Ticket::IN_PROGRESS,
+            'waiting_feedback' => Ticket::WAITING_FOR_CUSTOMER_FEEDBACK,
+            'close' => Ticket::CLOSE,
+            'high_priority' => Ticket::HIGH_PRIORITY,
+            'medium_priority' => Ticket::MEDIUM_PRIORITY,
+            'low_priority' => Ticket::LOW_PRIORITY,
         ]);
     }
 }
