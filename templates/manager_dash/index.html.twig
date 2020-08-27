@@ -28,19 +28,21 @@
                 <td>{{ ticket.customer }}</td>
                 <td>
                     <p>Current: {{ ticket.agent ?? "No assigned agent." }}</p>
-                    <form method="post">
-                        <input type="hidden" name="ticketId" value="{{ ticket.id }}">
-                        <label>
-                            <select name="reassignAgent">
-                                {% for agent in agents %}
-                                    <option value="{{ agent.id }}">{{ agent.email }}</option>
-                                {% else %}
-                                    No agent found.
-                                {% endfor %}
-                            </select>
-                        </label>
-                        <button type="submit">Reassign Agent</button>
-                    </form>
+                    {% if ticket.status != close %}
+                        <form method="post">
+                            <input type="hidden" name="ticketId" value="{{ ticket.id }}">
+                            <label>
+                                <select name="reassignAgent">
+                                    {% for agent in agents %}
+                                        <option value="{{ agent.id }}">{{ agent.email }}</option>
+                                    {% else %}
+                                        No agent found.
+                                    {% endfor %}
+                                </select>
+                            </label>
+                            <button type="submit">Reassign Agent</button>
+                        </form>
+                    {% endif %}
                 </td>
                 <td>
                     {% if ticket.status == open %}
@@ -63,32 +65,36 @@
                             Low
                         {% endif %}
                     </p>
-                    <form method="post">
-                        <input type="hidden" name="ticketId" value="{{ ticket.id }}">
-                        <label>
-                            <select name="setPriority">
-                                <option value="{{ high_priority }}">High</option>
-                                <option value="{{ medium_priority }}">Medium</option>
-                                <option value="{{ low_priority }}">Low</option>
-                            </select>
-                        </label>
-                        <button type="submit">Set Priority</button>
-                    </form>
+                    {% if ticket.status != close %}
+                        <form method="post">
+                            <input type="hidden" name="ticketId" value="{{ ticket.id }}">
+                            <label>
+                                <select name="setPriority">
+                                    <option value="{{ high_priority }}">High</option>
+                                    <option value="{{ medium_priority }}">Medium</option>
+                                    <option value="{{ low_priority }}">Low</option>
+                                </select>
+                            </label>
+                            <button type="submit">Set Priority</button>
+                        </form>
+                    {% endif %}
                 </td>
                 <td>{{ ticket.createdDate|date("F jS \\a\\t g:ia") }}</td>
                 <td>{{ ticket.updatedDate|date("F jS \\a\\t g:ia") }}</td>
                 <td>{{ ticket.isEscalated ? 'Yes' : 'No' }}</td>
                 <td>
-                    {% if ticket.closeReason %}
-                        {{ ticket.closeReason }}
-                    {% else %}
-                        <form method="post">
-                            <input type="hidden" name="ticketId" value="{{ ticket.id }}">
-                            <label>
-                                <textarea name="closeReason" cols="10" rows="3" required></textarea>
-                            </label>
-                            <button type="submit">Won't Fix</button>
-                        </form>
+                    {% if ticket.status != close %}
+                        {% if ticket.closeReason %}
+                            {{ ticket.closeReason }}
+                        {% else %}
+                            <form method="post">
+                                <input type="hidden" name="ticketId" value="{{ ticket.id }}">
+                                <label>
+                                    <textarea name="closeReason" cols="10" rows="3" required></textarea>
+                                </label>
+                                <button type="submit">Won't Fix</button>
+                            </form>
+                        {% endif %}
                     {% endif %}
                 </td>
             </tr>
