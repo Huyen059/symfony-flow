@@ -7,42 +7,102 @@
 
     <table class="table">
         <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Content</th>
-                <th>Customer Id</th>
-                <th>Agent Id</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>Creation date</th>
-                <th>Update date</th>
-                <th>Escalated?</th>
-                <th>Reason for closing</th>
-            </tr>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Customer Id</th>
+            <th>Agent Id</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Creation date</th>
+            <th>Update date</th>
+            <th>Escalated?</th>
+            <th>Reason for closing</th>
+        </tr>
         </thead>
         <tbody>
         {% for ticket in tickets %}
             <tr>
                 <td>{{ ticket.id }}</td>
-                <td>{{ ticket.title }}</td>
-                <td>{{ ticket.content }}</td>
+                <td><a href="{{ path('ticket_show', {'id': ticket.id }) }}">{{ ticket.title }}</a></td>
                 <td>{{ ticket.customer }}</td>
-                <td>{{ ticket.agent }}</td>
-                <td>{{ ticket.status }}</td>
-                <td>{{ ticket.priority }}</td>
+                <td>
+                    <p>Current: {{ ticket.agent ?? "No assigned agent." }}</p>
+                    {% if ticket.status != close %}
+                        <form method="post">
+                            <input type="hidden" name="ticketId" value="{{ ticket.id }}">
+                            <label>
+                                <select name="reassignAgent">
+                                    {% for agent in agents %}
+                                        <option value="{{ agent.id }}">{{ agent.email }}</option>
+                                    {% else %}
+                                        No agent found.
+                                    {% endfor %}
+                                </select>
+                            </label>
+                            <button type="submit">Reassign Agent</button>
+                        </form>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if ticket.status == open %}
+                        Open
+                    {% elseif ticket.status == in_progress %}
+                        In progress
+                    {% elseif ticket.status == waiting_feedback %}
+                        Waiting for customer feedback
+                    {% else %}
+                        Close
+                    {% endif %}
+                </td>
+                <td>
+                    <p>Current:
+                        {% if ticket.priority == high_priority %}
+                            High
+                        {% elseif ticket.priority == medium_priority %}
+                            Medium
+                        {% else %}
+                            Low
+                        {% endif %}
+                    </p>
+                    {% if ticket.status != close %}
+                        <form method="post">
+                            <input type="hidden" name="ticketId" value="{{ ticket.id }}">
+                            <label>
+                                <select name="setPriority">
+                                    <option value="{{ high_priority }}">High</option>
+                                    <option value="{{ medium_priority }}">Medium</option>
+                                    <option value="{{ low_priority }}">Low</option>
+                                </select>
+                            </label>
+                            <button type="submit">Set Priority</button>
+                        </form>
+                    {% endif %}
+                </td>
                 <td>{{ ticket.createdDate|date("F jS \\a\\t g:ia") }}</td>
                 <td>{{ ticket.updatedDate|date("F jS \\a\\t g:ia") }}</td>
                 <td>{{ ticket.isEscalated ? 'Yes' : 'No' }}</td>
-                <td>{{ ticket.closeReason}}</td>
                 <td>
-                    <a href="{{ path('ticket_show', {'id': ticket.id}) }}">show</a>
-                    <a href="{{ path('ticket_edit', {'id': ticket.id}) }}">edit</a>
+
+                        {% if ticket.closeReason %}
+                            {{ ticket.closeReason }}
+                        {% else %}
+                            {% if ticket.status != close %}
+                            <form method="post">
+                                <input type="hidden" name="ticketId" value="{{ ticket.id }}">
+                                <label>
+                                    <textarea name="closeReason" cols="10" rows="3" required></textarea>
+                                </label>
+                                <button type="submit">Won't Fix</button>
+                            </form>
+                            {% endif %}
+                        {% endif %}
+
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="6">no records found</td>
+                <td colspan="10">no records found</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -56,12 +116,11 @@
         <tr>
             <th>Id</th>
             <th>Email</th>
-            <th>IsVerified</th>
+            <th>Is Second Line</th>
             <th>Number of <em>open</em> tickets</th>
             <th>Number of <em>closed</em> tickets</th>
             <th>Number of <em>reopened</em> tickets</th>
             <th>Ticket success rate (closed - reopened)</th>
-            <th>actions</th>
         </tr>
         </thead>
         <tbody>
@@ -69,15 +128,11 @@
             <tr>
                 <td>{{ agent.id }}</td>
                 <td>{{ agent.email }}</td>
-                <td>{{ agent.isVerified ? 'Yes' : 'No' }}</td>
+                <td>{{ role_agent_second_line in agent.roles ? "Yes" : "No" }}</td>
                 <td>{{ agent.openTickets }}</td>
                 <td>{{ agent.closedTickets }}</td>
                 <td>{{ agent.reopen }}</td>
-                <td>{{ agent.closedTickets - agent.reopen}}</td>
-                <td>
-                    <a href="{{ path('user_show', {'id': agent.id}) }}">show</a>
-                    <a href="{{ path('user_edit', {'id': agent.id}) }}">edit</a>
-                </td>
+                <td>{{ agent.closedTickets - agent.reopen }}</td>
             </tr>
         {% else %}
             <tr>

@@ -70,15 +70,14 @@ class CustomerController extends AbstractController
         if ($request->request->get('reOpen')) {
             /** @var \DateTimeImmutable $update */
             $update = $ticket->getUpdatedDate();
-            if ($update->add(new \DateInterval("PT1H")) >= new \DateTimeImmutable()) {
-
+            if ($update->add(new \DateInterval("PT1H")) >= new \DateTimeImmutable() && $ticket->getCloseReason() === null) {
                 $ticket->setStatus(Ticket::IN_PROGRESS);
                 $ticket->getAgent()->setReopen($ticket->getAgent()->getReopen() + 1);
                 $this->getDoctrine()->getManager()->persist($ticket);
                 $this->getDoctrine()->getManager()->flush();
                 return $this->redirectToRoute('customer_tickets', ['id' => $ticket->getId()]);
             }
-            $error = " You can no longer Re-open a case after it has expired";
+            $error = " You can no longer Re-open a case after it has expired or is permanently closed by manager.";
 
 
         }

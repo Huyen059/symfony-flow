@@ -46,9 +46,22 @@
         </tbody>
     </table>
 
-    <a href="{{ path('ticket_index') }}">back to list</a>
+    <section class="example-wrapper">
+        <h1>List of comments on this ticket</h1>
+        {% for comment in ticket.comments %}
+            <div>
+                <h3>{{ comment.title }}</h3>
+                {% if comment.isPrivate %}
+                    <p>This comment is private!</p>
+                {% endif %}
+                <p>{{ comment.content }}</p>
+            </div>
+        {% else %}
+            <p>No comment yet.</p>
+        {% endfor %}
+    </section>
 
-    <a href="{{ path('ticket_edit', {'id': ticket.id}) }}">edit</a>
 
-    {{ include('ticket/_delete_form.html.twig') }}
+    <a href="{{ path('manager_dash') }}">Back to Dashboard</a>
+
 {% endblock %}
