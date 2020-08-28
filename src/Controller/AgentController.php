@@ -26,12 +26,12 @@ class AgentController extends AbstractController
          * @var Agent $agent
          */
         $agent = $this->getUser();
-        if ($agent->getRoles()[0] === self::ROLE_AGENT_SECOND_LINE) {
-            $agent->setIsSecondLine(true);
+        if (in_array(self::ROLE_AGENT_SECOND_LINE, $agent->getRoles())) {
+            $agent->setIsSecondLine(true);//@todo Move to agent class
         }
 
         // Get the tickets that match the agent (normal agent: not-escalated ticket, second-line agent: escalated ticket)
-        $tickets = $this->getDoctrine()->getRepository(Ticket::class)->findBy(['isEscalated' => $agent->getIsSecondLine()]);
+        $tickets = $this->getDoctrine()->getRepository(Ticket::class)->findBy(['isEscalated' => $agent->getIsSecondLine()], ['priority']);
 
         return $this->render('agent/index.html.twig', [
             'tickets' => $tickets,
@@ -63,7 +63,7 @@ class AgentController extends AbstractController
         $ticket->setAgent($agent)
             ->setStatus(Ticket::IN_PROGRESS)
             ->setUpdatedDate(new \DateTimeImmutable());
-        $this->getDoctrine()->getManager()->persist($ticket);
+//        $this->getDoctrine()->getManager()->persist($ticket);
         $this->getDoctrine()->getManager()->flush();
 
         $email = (new Email())
@@ -122,6 +122,12 @@ class AgentController extends AbstractController
             $agent->setIsSecondLine(true);
         }
 
+
+        $form = $this->createForm(AgentCommentType::class, new Comment);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {}//@todo check if form is valid
+
         $form = $request->request->get('agent_comment');
         $comment = new Comment();
         // Assign user and ticket to this comment
@@ -130,7 +136,7 @@ class AgentController extends AbstractController
             ->setTitle($form['title'])
             ->setContent($form['content']);
         // Check if this comment is private, if not, change status of ticket
-        $isPrivate = $form['isPrivate'] ? true : false;
+        $isPrivate = $form['isPrivate'] ? true : false;//(bool)$form['isPrivate']
         $comment->setIsPrivate($isPrivate);
         if (!$isPrivate) {
             $ticket->setStatus(Ticket::WAITING_FOR_CUSTOMER_FEEDBACK)
@@ -160,7 +166,7 @@ class AgentController extends AbstractController
     public function closeTicket(Ticket $ticket, MailerInterface $mailer)
     {
         foreach ($ticket->getComments() as $comment) {
-            if ($comment->getUser() instanceof Agent && !$comment->getIsPrivate()) {
+            if ($comment->getUser() instanceof Agent && !$comment->getIsPrivate()) {//@todo move this to a bool function in Ticket
                 $ticket->setStatus(Ticket::CLOSE)
                     ->setUpdatedDate(new \DateTimeImmutable());
                 $this->getDoctrine()->getManager()->persist($ticket);
@@ -194,7 +200,7 @@ class AgentController extends AbstractController
             ->setAgent(null)
             ->setStatus(Ticket::OPEN)
             ->setUpdatedDate(new \DateTimeImmutable());
-        $this->getDoctrine()->getManager()->persist($ticket);
+//        $this->getDoctrine()->getManager()->persist($ticket);
         $this->getDoctrine()->getManager()->flush();
 
         $email = (new Email())

@@ -267,4 +267,17 @@ class Ticket
 
         return $this;
     }
+
+    public function updateReopenCounter()
+    {
+        $this->reopen++;
+    }
+
+    public function escalate()
+    {
+        $this->setIsEscalated(true)
+            ->setAgent(null)
+            ->setStatus(Ticket::OPEN)
+            ->setUpdatedDate(new \DateTimeImmutable());
+    }
 }

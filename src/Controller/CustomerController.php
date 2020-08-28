@@ -22,10 +22,9 @@ class CustomerController extends AbstractController
     {
         $tickets = $this->getDoctrine()->getRepository(Ticket::class)->findBy(['customer' => $this->getUser()]);
 
-
         return $this->render('customer/index.html.twig', [
             'tickets' => $tickets,
-            'open' => Ticket::OPEN,
+            'open' => Ticket::OPEN,//@todo use twig constants
             'in_progress' => Ticket::IN_PROGRESS,
             'waiting_feedback' => Ticket::WAITING_FOR_CUSTOMER_FEEDBACK,
             'close' => Ticket::CLOSE,
@@ -38,9 +37,12 @@ class CustomerController extends AbstractController
      */
     public function customerTickets(Ticket $ticket)
     {
-        $style = __DIR__ . "/../../public/assets/customerStyle.css";
+        if($this->getUser()->getId() !== $ticket->getUser()->getId())       {
+            throw $this->createNotFoundException();
+        }
+
         $comment = new Comment();
-        $comment->setUser($this->getUser());
+        $comment->setUser($this->getUser());//@todo can remove this
         $comment->setTicket($ticket);
 
         $form = $this->createForm(CommentType::class, $comment,
@@ -51,7 +53,6 @@ class CustomerController extends AbstractController
             'form' => $form->createView(),
             'ticket' => $ticket,
             'close' => Ticket::CLOSE,
-            'style' => $style,
             'open' => Ticket::OPEN,
             'in_progress' => Ticket::IN_PROGRESS,
             'waiting_feedback' => Ticket::WAITING_FOR_CUSTOMER_FEEDBACK,
@@ -63,6 +64,10 @@ class CustomerController extends AbstractController
      */
     public function addComment(Ticket $ticket, Request $request, MailerInterface $mailer)
     {
+        if($this->getUser()->getId() !== $ticket->getUser()->getId())       {
+            throw $this->createNotFoundException();
+        }
+
         $form = $request->request->get('comment');
         $comment = new Comment();
         $comment->setTitle($form['title'])
@@ -74,8 +79,8 @@ class CustomerController extends AbstractController
             $ticket->setStatus(Ticket::IN_PROGRESS);
 
             $email = (new Email())
-                ->from('becode@test.com')
-                ->to('samihuyen059@gmail.com')
+                ->from('becode@test.com')//@todo move to constant
+                ->to('samihuyen059@gmail.com')//@todo send to actual user
                 ->subject('Customer has posted their feedback.')
                 ->text('Customer has posted their feedback. Please review/answer this new feedback.');
             try {
@@ -100,14 +105,15 @@ class CustomerController extends AbstractController
     {
         /** @var \DateTimeImmutable $update */
         $update = $ticket->getUpdatedDate();
-        if ($update->add(new \DateInterval("PT1H")) >= new \DateTimeImmutable() && $ticket->getCloseReason() === null) {
-            $ticket->setStatus(Ticket::IN_PROGRESS);
-            $ticket->setReopen($ticket->getReopen() + 1);
-            $this->getDoctrine()->getManager()->persist($ticket);
-            $this->getDoctrine()->getManager()->flush();
+        if ($update->add(new \DateInterval("PT1H")) < new \DateTimeImmutable() || $ticket->getCloseReason() !== null) {//@todo make method $ticket->canReopen()
+            $this->addFlash('error', 'You can no longer Re-open a case after it has expired or is permanently closed by manager.');
             return $this->redirectToRoute('customer_tickets', ['id' => $ticket->getId()]);
         }
-        $this->addFlash('error', 'You can no longer Re-open a case after it has expired or is permanently closed by manager.');
+
+        $ticket->setStatus(Ticket::IN_PROGRESS);
+        $ticket->setReopen($ticket->getReopen() + 1);//@todo refactor to $ticket->updateReopenCounter()
+        $this->getDoctrine()->getManager()->persist($ticket);
+        $this->getDoctrine()->getManager()->flush();
         return $this->redirectToRoute('customer_tickets', ['id' => $ticket->getId()]);
     }
 

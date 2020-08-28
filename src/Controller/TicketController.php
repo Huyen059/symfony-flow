@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TicketController extends AbstractController
 {
-    public const ROLE_AGENT_SECOND_LINE = 'ROLE_AGENT_SECOND_LINE';
+    public const ROLE_AGENT_SECOND_LINE = 'ROLE_AGENT_SECOND_LINE';//@todo move to agent
     public const ROLE_AGENT = 'ROLE_AGENT';
     /**
      * @Route("/", name="ticket_index", methods={"GET"})
@@ -25,7 +25,7 @@ class TicketController extends AbstractController
     public function index(TicketRepository $ticketRepository): Response
     {
         return $this->render('ticket/index.html.twig', [
-            'tickets' => $ticketRepository->findAll(),
+            'tickets' => $ticketRepository->findBy([], ['priority']),
         ]);
     }
 
