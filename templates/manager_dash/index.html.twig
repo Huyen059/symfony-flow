@@ -154,6 +154,8 @@
                 <td>
                     {% if agent.returnReopenTicket %}
                         {{ (100 - (agent.returnReopenTicket * 100 / (agent.returnCloseTicket + agent.returnReopenTicket)))|round(2, 'floor') }}%
+                    {% elseif agent.returnCloseTicket %}
+                        100%
                     {% endif %}
                 </td>
             </tr>
