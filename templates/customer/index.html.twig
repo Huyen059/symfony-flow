@@ -1,7 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Your Tickets{% endblock %}
-{% block stylesheets %}<link rel="stylesheet" href="assets/customerStyle.css">{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="assets/customerStyle.css">{% endblock %}
 {% block body %}
     <style>
         .example-wrapper {
@@ -17,28 +18,33 @@
         }
     </style>
     {% block header %}
-        <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
-            <a class="navbar-brand" href="#"><img class="nav-logo" src="img/symfony_black.png" alt="Symfony logo"></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <div class="example-wrapper">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
+                <a class="navbar-brand" href="#"><img class="nav-logo" src="img/symfony_black.png"
+                                                      alt="Symfony logo"></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item ">
-                        <a class="nav-link" href="{{ path('homepage') }}">Home <span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item active">
-                       <a class="nav-link" href="{{ path('customer_home') }}">Your Tickets</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_logout') }}">Logout</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item ">
+                            <a class="nav-link" href="{{ path('homepage') }}">Home <span
+                                        class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{{ path('customer_home') }}">Your Tickets</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_logout') }}">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
     {% endblock %}
-
     <div class="example-wrapper rounded">
         <h1>Your Tickets</h1>
         <button class="btn btn-primary ">

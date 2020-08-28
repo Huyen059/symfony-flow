@@ -1,204 +1,241 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Dashboard{% endblock %}
-{% block stylesheets %} <link rel="stylesheet" href="{{ asset('assets/managerStyle.css') }}">{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/managerStyle.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/customerStyle.css') }}">
+{% endblock %}
 
 
 {% block body %}
-    <h1 class="text-center pt-3">Ticket overview</h1>
-    <hr class="w-50 mx-auto">
-    <div class="border border-info p-2 mx-auto mb-3 w-25 d-flex rounded">
-    <h3 class="ml-4">Actions</h3>
-    <form classaction="{{ path('ticket_reset') }}">
-        <button class="ml-4 p-1 btn-success " name="openTickets">Open All Tickets</button>
-    </form>
-    </div>
-    <table class="table table-striped table-hover table-success ticket-table">
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>Title</th>
-            <th>Customer Id</th>
-            <th>Agent Id</th>
-            <th>Status</th>
-            <th>Priority</th>
-            <th>Creation date</th>
-            <th>Update date</th>
-            <th>Escalated?</th>
-            <th>Reason for closing</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for ticket in tickets %}
-            <tr>
-                <td class="pt-5">{{ ticket.id }}</td>
-                <td class="pt-5"><a href="{{ path('ticket_show', {'id': ticket.id }) }}">{{ ticket.title }}</a></td>
-                <td class="pt-5" style="font-weight: bold;">{{ ticket.customer }}</td>
-                <td>
-                    <p>Current: {{ ticket.agent ?? "No assigned agent." }}</p>
-                    {% if ticket.status != close %}
-                        <form method="post">
-                            <input type="hidden" name="ticketId" value="{{ ticket.id }}">
-                            <label>
-                                <select class="btn- btn-light" name="reassignAgent">
-                                    {% for agent in agents %}
-                                        <option value="{{ agent.id }}">{{ agent.email }}</option>
-                                    {% else %}
-                                        No agent found.
-                                    {% endfor %}
-                                </select>
-                            </label>
-                            <button class="btn btn-info" type="submit">Reassign Agent</button>
-                        </form>
-                    {% endif %}
-                </td>
-                <td class="pt-5">
-                    {% if ticket.status == open %}
-                        Open
-                    {% elseif ticket.status == in_progress %}
-                        In progress
-                    {% elseif ticket.status == waiting_feedback %}
-                        Waiting for customer feedback
-                    {% else %}
-                        Close
-                    {% endif %}
-                </td>
-                <td>
-                    <p>Current:
-                        {% if ticket.priority == high_priority %}
-                            High
-                        {% elseif ticket.priority == medium_priority %}
-                            Medium
-                        {% else %}
-                            Low
+    <style>
+        .example-wrapper {
+            margin: 1em auto;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 sans-serif;
+        }
+
+        .example-wrapper code {
+            background: #F5F5F5;
+            padding: 2px 6px;
+        }
+    </style>
+    <div class="example-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
+            <a class="navbar-brand" href="{{ path('homepage') }}"><img class="nav-logo" src="/img/symfony_black.png"
+                                                                       alt="Symfony logo"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('homepage') }}">Home</a>
+                    </li>
+
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ path('manager_dash') }}">Dashboard</a>
+                    </li>
+
+                    <li class="nav-item">
+                        {% if app.user %}
+                            <a class="nav-link" href="{{ path('app_logout') }}">Logout</a>
                         {% endif %}
-                    </p>
-                    {% if ticket.status != close %}
-                        <form method="post">
-                            <input type="hidden" name="ticketId" value="{{ ticket.id }}">
-                            <label>
-                                <select class="btn- btn-light" name="setPriority">
-                                    <option value="{{ high_priority }}">High</option>
-                                    <option value="{{ medium_priority }}">Medium</option>
-                                    <option value="{{ low_priority }}">Low</option>
-                                </select>
-                            </label>
-                            <button class="btn btn-info" type="submit">Set Priority</button>
-                        </form>
-                    {% endif %}
-                </td>
-                <td class="pt-5">{{ ticket.createdDate|date("F jS \\a\\t g:ia") }}</td>
-                <td class="pt-5">{{ ticket.updatedDate|date("F jS \\a\\t g:ia") }}</td>
-                <td class="pt-5">{{ ticket.isEscalated ? 'Yes' : 'No' }}</td>
-                <td>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+        <h1 class="text-center pt-3">Ticket overview</h1>
+        <hr class="w-50 mx-auto">
+        <div class="border border-info p-2 mx-auto mb-3 w-25 d-flex rounded">
+            <h3 class="ml-4">Actions</h3>
+            <form action="{{ path('ticket_reset') }}">
+                <button class="ml-4 p-1 btn-success " name="openTickets">Open All Tickets</button>
+            </form>
+        </div>
+        <table class="table table-striped table-hover table-success ticket-table">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Customer Id</th>
+                <th>Agent Id</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Creation date</th>
+                <th>Update date</th>
+                <th>Escalated?</th>
+                <th>Reason for closing</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ticket in tickets %}
+                <tr>
+                    <td class="pt-5">{{ ticket.id }}</td>
+                    <td class="pt-5"><a href="{{ path('ticket_show', {'id': ticket.id }) }}">{{ ticket.title }}</a></td>
+                    <td class="pt-5" style="font-weight: bold;">{{ ticket.customer }}</td>
+                    <td>
+                        <p>Current: {{ ticket.agent ?? "No assigned agent." }}</p>
+                        {% if ticket.status != close %}
+                            <form method="post">
+                                <input type="hidden" name="ticketId" value="{{ ticket.id }}">
+                                <label>
+                                    <select class="btn- btn-light" name="reassignAgent">
+                                        {% for agent in agents %}
+                                            <option value="{{ agent.id }}">{{ agent.email }}</option>
+                                        {% else %}
+                                            No agent found.
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                                <button class="btn btn-info" type="submit">Reassign Agent</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                    <td class="pt-5">
+                        {% if ticket.status == open %}
+                            Open
+                        {% elseif ticket.status == in_progress %}
+                            In progress
+                        {% elseif ticket.status == waiting_feedback %}
+                            Waiting for customer feedback
+                        {% else %}
+                            Close
+                        {% endif %}
+                    </td>
+                    <td>
+                        <p>Current:
+                            {% if ticket.priority == high_priority %}
+                                High
+                            {% elseif ticket.priority == medium_priority %}
+                                Medium
+                            {% else %}
+                                Low
+                            {% endif %}
+                        </p>
+                        {% if ticket.status != close %}
+                            <form method="post">
+                                <input type="hidden" name="ticketId" value="{{ ticket.id }}">
+                                <label>
+                                    <select class="btn- btn-light" name="setPriority">
+                                        <option value="{{ high_priority }}">High</option>
+                                        <option value="{{ medium_priority }}">Medium</option>
+                                        <option value="{{ low_priority }}">Low</option>
+                                    </select>
+                                </label>
+                                <button class="btn btn-info" type="submit">Set Priority</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                    <td class="pt-5">{{ ticket.createdDate|date("F jS \\a\\t g:ia") }}</td>
+                    <td class="pt-5">{{ ticket.updatedDate|date("F jS \\a\\t g:ia") }}</td>
+                    <td class="pt-5">{{ ticket.isEscalated ? 'Yes' : 'No' }}</td>
+                    <td>
 
                         {% if ticket.closeReason %}
                             {{ ticket.closeReason }}
                         {% else %}
                             {% if ticket.status != close %}
-                            <form class="form-group" method="post">
-                                <input class="form-text" type="hidden" name="ticketId" value="{{ ticket.id }}">
-                                <label>
-                                    <textarea class="form-control" name="closeReason" cols="20" rows="3" required></textarea>
-                                </label>
-                                <button class="btn btn-danger" type="submit">Won't Fix</button>
-                            </form>
+                                <form class="form-group" method="post">
+                                    <input class="form-text" type="hidden" name="ticketId" value="{{ ticket.id }}">
+                                    <label>
+                                    <textarea class="form-control" name="closeReason" cols="20" rows="3"
+                                              required></textarea>
+                                    </label>
+                                    <button class="btn btn-danger" type="submit">Won't Fix</button>
+                                </form>
                             {% endif %}
                         {% endif %}
 
-                </td>
-            </tr>
-        {% else %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="10">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h1 class="mt-4 text-center">Agent index</h1>
+        <hr class="w-50 mx-auto">
+        <div class="border border-info p-2 mx-auto mb-3 w-25 d-flex rounded">
+            <h3 class="ml-4">Actions</h3>
+            <form action="{{ path('agent_new') }}">
+                <button class="ml-5 p-1 btn-success">New Agent</button>
+            </form>
+        </div>
+
+        <table class="table table-striped table-hover table-success">
+            <thead>
             <tr>
-                <td colspan="10">no records found</td>
+                <th>Id</th>
+                <th>Email</th>
+                <th>Is Second Line</th>
+                <th>Number of <em>open</em> tickets</th>
+                <th>Number of <em>closed</em> tickets</th>
+                <th>Number of <em>reopened</em> tickets</th>
+                <th>Ticket success rate (closed - reopened)</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for agent in agents %}
+                <tr>
+                    <td>{{ agent.id }}</td>
+                    <td>{{ agent.email }}</td>
+                    <td>{{ role_agent_second_line in agent.roles ? "Yes" : "No" }}</td>
+                    <td>{{ agent.openTickets }}</td>
+                    <td>{{ agent.closedTickets }}</td>
+                    <td>{{ agent.reopen }}</td>
+                    <td>{{ agent.closedTickets - agent.reopen }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
 
-    <h1 class="mt-2 text-center">Agent index</h1>
 
-
-    <table class="table table-striped table-hover table-success">
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>Email</th>
-            <th>Is Second Line</th>
-            <th>Number of <em>open</em> tickets</th>
-            <th>Number of <em>closed</em> tickets</th>
-            <th>Number of <em>reopened</em> tickets</th>
-            <th>Ticket success rate (closed - reopened)</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for agent in agents %}
+        <h1 class="text-center mt-4">Customer index</h1>
+        <hr class="w-50 mx-auto">
+        <table class="table w-50 table-striped table-success table-hover">
+            <thead>
             <tr>
-                <td>{{ agent.id }}</td>
-                <td>{{ agent.email }}</td>
-                <td>{{ role_agent_second_line in agent.roles ? "Yes" : "No" }}</td>
-                <td>{{ agent.openTickets }}</td>
-                <td>{{ agent.closedTickets }}</td>
-                <td>{{ agent.reopen }}</td>
-                <td>{{ agent.closedTickets - agent.reopen }}</td>
+                <th>Id</th>
+                <th>Email</th>
+
+                <th>Convert</th>
             </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for customer in customers %}
+                <tr>
+                    <td>{{ customer.id }}</td>
+                    <td>{{ customer.email }}</td>
 
-    <h3 class="ml-4 text-center mt-2">Actions</h3>
-    <hr class="mx-auto w-50">
+                    <td>
+                        <form class="d-flex justify-content-around" method="post">
+                            <input type="hidden" name="convertToAgent" value="{{ customer.id }}">
+                            <label>Is Second Line?
+                                <input type="checkbox" name="isSecondLine">
+                            </label>
+                            <button class="btn btn-info" type="submit">Convert to Agent</button>
+                        </form>
+                    </td>
 
-    <div class="border border-info p-2 mx-auto mb-3 w-25 d-flex rounded">
-    <h3 class="ml-4">Actions</h3>
-        <form action="{{ path('agent_new') }}" >
-            <button class="ml-5 p-1 btn-success">New Agent</button>
-        </form>
-    </div>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
 
-
-    <h1>Ticket Control</h1>
-    <form action="{{ path('ticket_reset') }}" method="post">
-        <button name="openTickets">Open All Tickets</button>
-    </form>
-
-    <h1 class="text-center">Customer index</h1>
-
-    <table class="table w-50 table-striped table-success table-hover">
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>Email</th>
-
-            <th>Convert</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for customer in customers %}
-            <tr>
-                <td>{{ customer.id }}</td>
-                <td>{{ customer.email }}</td>
-
-                <td>
-                    <form class="d-flex justify-content-around" method="post">
-                        <input type="hidden" name="convertToAgent" value="{{ customer.id }}">
-                        <label>Is Second Line?
-                            <input type="checkbox" name="isSecondLine">
-                        </label>
-                        <button class="btn btn-info" type="submit">Convert to Agent</button>
-                    </form>
-                </td>
-
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
 {% endblock %}
