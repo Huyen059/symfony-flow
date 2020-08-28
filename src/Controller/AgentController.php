@@ -18,9 +18,9 @@ class AgentController extends AbstractController
     const ROLE_AGENT_SECOND_LINE = 'ROLE_AGENT_SECOND_LINE';
 
     /**
-     * @Route("/agent/home", name="agent_home", methods={"GET", "POST"})
+     * @Route("/agent/home", name="agent_home", methods={"GET"})
      */
-    public function index(Request $request, MailerInterface $mailer)
+    public function index()
     {
         /**
          * @var Agent $agent
@@ -74,7 +74,7 @@ class AgentController extends AbstractController
         try {
             $mailer->send($email);
         } catch (TransportExceptionInterface $e) {
-            $error = $e->getMessage();
+            $this->addFlash('error', 'Your email has not been sent.');
         }
 
         return $this->redirectToRoute('agent_home');
@@ -83,9 +83,8 @@ class AgentController extends AbstractController
     /**
      * @Route("/agent/ticket/{id}", name="agent_ticket", methods={"GET"})
      */
-    public function agentTicketDetail(Ticket $ticket, Request $request, MailerInterface $mailer)
+    public function agentTicketDetail(Ticket $ticket)
     {
-        $error = '';
         /**
          * @var Agent $agent
          */
@@ -99,7 +98,6 @@ class AgentController extends AbstractController
         return $this->render('agent/detail.html.twig', [
             'ticket' => $ticket,
             'form' => $form->createView(),
-            'error' => $error,
             'agent' => $agent,
             'open' => Ticket::OPEN,
             'in_progress' => Ticket::IN_PROGRESS,
@@ -147,7 +145,7 @@ class AgentController extends AbstractController
             try {
                 $mailer->send($email);
             } catch (TransportExceptionInterface $e) {
-                $error = $e->getMessage();
+                $this->addFlash('error', 'Your email has not been sent.');
             }
         }
 
@@ -176,14 +174,14 @@ class AgentController extends AbstractController
                 try {
                     $mailer->send($email);
                 } catch (TransportExceptionInterface $e) {
-                    $error = $e->getMessage();
+                    $this->addFlash('error', 'Your email has not been sent.');
                 }
 
                 return $this->redirectToRoute('agent_ticket', ['id' => $ticket->getId()]);
             }
         }
+        $this->addFlash('error', 'A ticket can only be closed when it has at least one public comment from an agent.');
 
-        $error = "A ticket can only be closed when it has at least one public comment from an agent.";
         return $this->redirectToRoute('agent_ticket', ['id' => $ticket->getId()]);
     }
 
@@ -207,7 +205,7 @@ class AgentController extends AbstractController
         try {
             $mailer->send($email);
         } catch (TransportExceptionInterface $e) {
-            $error = $e->getMessage();
+            $this->addFlash('error', 'Your email has not been sent.');
         }
 
         return $this->redirectToRoute('agent_home');

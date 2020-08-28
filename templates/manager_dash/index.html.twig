@@ -50,6 +50,13 @@
         </nav>
     </div>
     <h1 class="h1 my-5 font-weight-normal text-center">Ticket overview</h1>
+    <div>
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
     <hr class="w-50 mx-auto">
     <div class="border border-info p-2 mx-auto mb-3 d-flex rounded">
         <form action="{{ path('ticket_reset') }}">

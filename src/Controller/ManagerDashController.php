@@ -122,7 +122,7 @@ class ManagerDashController extends AbstractController
         try {
             $mailer->send($email);
         } catch (TransportExceptionInterface $e) {
-            $error = $e->getMessage();
+            $this->addFlash('error', 'Your email has not been sent.');
         }
 
         return $this->redirectToRoute('manager_dash');
