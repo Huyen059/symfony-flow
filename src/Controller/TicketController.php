@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Agent;
 use App\Entity\Customer;
 use App\Entity\Ticket;
 use App\Form\TicketType;
@@ -16,6 +17,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TicketController extends AbstractController
 {
+    public const ROLE_AGENT_SECOND_LINE = 'ROLE_AGENT_SECOND_LINE';
+    public const ROLE_AGENT = 'ROLE_AGENT';
     /**
      * @Route("/", name="ticket_index", methods={"GET"})
      */
@@ -60,8 +63,24 @@ class TicketController extends AbstractController
      */
     public function show(Ticket $ticket): Response
     {
+        $agents = $this->getDoctrine()
+            ->getRepository(Agent::class)
+            ->findAll();
+        $customers = $this->getDoctrine()
+            ->getRepository(Customer::class)
+            ->findAll();
         return $this->render('ticket/show.html.twig', [
             'ticket' => $ticket,
+            'agents' => $agents,
+            'customers' => $customers,
+            'high_priority' => Ticket::HIGH_PRIORITY,
+            'medium_priority' => Ticket::MEDIUM_PRIORITY,
+            'low_priority' => Ticket::LOW_PRIORITY,
+            'role_agent_second_line' => self::ROLE_AGENT_SECOND_LINE,
+            'open' => Ticket::OPEN,
+            'in_progress' => Ticket::IN_PROGRESS,
+            'waiting_feedback' => Ticket::WAITING_FOR_CUSTOMER_FEEDBACK,
+            'close' => Ticket::CLOSE,
         ]);
     }
 

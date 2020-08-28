@@ -140,7 +140,7 @@ class ManagerDashController extends AbstractController
             ->setStatus(Ticket::IN_PROGRESS);
         $this->getDoctrine()->getManager()->persist($ticket);
         $this->getDoctrine()->getManager()->flush();
-        return $this->redirectToRoute('manager_dash');
+        return $this->redirectToRoute('ticket_show', ['id' => $ticket->getId()]);
     }
 
     /**
@@ -152,7 +152,7 @@ class ManagerDashController extends AbstractController
         $ticket->setPriority($request->request->get('setPriority'));
         $this->getDoctrine()->getManager()->persist($ticket);
         $this->getDoctrine()->getManager()->flush();
-        return $this->redirectToRoute('manager_dash');
+        return $this->redirectToRoute('ticket_show', ['id' => $ticket->getId()]);
     }
 
     /**
@@ -166,7 +166,7 @@ class ManagerDashController extends AbstractController
             ->setUpdatedDate(new \DateTimeImmutable());
         $this->getDoctrine()->getManager()->persist($ticket);
         $this->getDoctrine()->getManager()->flush();
-        return $this->redirectToRoute('manager_dash');
+        return $this->redirectToRoute('ticket_show', ['id' => $ticket->getId()]);
     }
 
     /**
