@@ -77,7 +77,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            <form method="post">
+                            <form method="post" action="{{ path('agent_addTodo') }}">
                                 <input type="hidden" name="addToDo" value="{{ ticket.id }}">
                                 <button type="submit" class="btn btn-info" style="width: 7rem">Add to ToDo</button>
                             </form>
