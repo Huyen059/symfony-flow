@@ -85,7 +85,17 @@
             </tr>
             <tr>
                 <th>Status</th>
-                <td>{{ ticket.status }}</td>
+                <td>
+                    {% if ticket.status == open %}
+                        Open
+                    {% elseif ticket.status == in_progress %}
+                        In progress
+                    {% elseif ticket.status == waiting_feedback %}
+                        Waiting for customer feedback
+                    {% else %}
+                        Close
+                    {% endif %}
+                </td>
             </tr>
             <tr>
                 <th>Created Date</th>
