@@ -77,7 +77,7 @@ class CustomerController extends AbstractController
             $update = $ticket->getUpdatedDate();
             if ($update->add(new \DateInterval("PT1H")) >= new \DateTimeImmutable() && $ticket->getCloseReason() === null) {
                 $ticket->setStatus(Ticket::IN_PROGRESS);
-                $ticket->getAgent()->setReopen($ticket->getAgent()->getReopen() + 1);
+                $ticket->setReopen($ticket->getReopen() + 1);
                 $this->getDoctrine()->getManager()->persist($ticket);
                 $this->getDoctrine()->getManager()->flush();
                 return $this->redirectToRoute('customer_tickets', ['id' => $ticket->getId()]);

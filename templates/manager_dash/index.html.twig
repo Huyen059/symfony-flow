@@ -187,10 +187,14 @@
                 <td>{{ agent.id }}</td>
                 <td>{{ agent.email }}</td>
                 <td>{{ role_agent_second_line in agent.roles ? "Yes" : "No" }}</td>
-                <td>{{ agent.openTickets }}</td>
-                <td>{{ agent.closedTickets }}</td>
-                <td>{{ agent.reopen }}</td>
-                <td>{{ agent.closedTickets - agent.reopen }}</td>
+                <td>{{ agent.returnOpenTicket }}</td>
+                <td>{{ agent.returnCloseTicket }}</td>
+                <td>{{ agent.returnReopenTicket }}</td>
+                <td>
+                    {% if agent.returnReopenTicket %}
+                    {{ (agent.returnReopenTicket * 100 / (agent.returnCloseTicket + agent.returnReopenTicket))|round(2, 'floor') }}%
+                    {% endif %}
+                </td>
             </tr>
         {% else %}
             <tr>
