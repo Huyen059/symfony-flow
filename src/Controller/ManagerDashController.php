@@ -135,6 +135,9 @@ class ManagerDashController extends AbstractController
     {
         $ticket = $this->getDoctrine()->getRepository(Ticket::class)->findOneBy(['id' => $request->request->get('ticketId')]);
         $agent = $this->getDoctrine()->getRepository(Agent::class)->findOneBy(['id' => $request->request->get('reassignAgent')]);
+        if(in_array(self::ROLE_AGENT_SECOND_LINE, $agent->getRoles())) {
+            $ticket->setIsEscalated(true);
+        }
         $ticket->setAgent($agent)
             ->setUpdatedDate(new \DateTimeImmutable())
             ->setStatus(Ticket::IN_PROGRESS);
