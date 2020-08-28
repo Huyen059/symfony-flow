@@ -6,6 +6,7 @@ use App\Entity\Agent;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -18,7 +19,9 @@ class AgentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('email')
+            ->add('email', EmailType::class, [
+                'attr' => ['class' => 'form-group w-100']
+            ])
             ->add('isSecondLine', ChoiceType::class, [
                 'label' => 'Agent is second line?',
                 'mapped' => false,
@@ -26,7 +29,8 @@ class AgentType extends AbstractType
                     'Yes' => true,
                     'No' => false
                 ],
-                'expanded' => true
+                'expanded' => true,
+                'attr' => ['class' => 'form-group w-100']
             ])
             ->add('plainPassword', PasswordType::class, [
                 // instead of being set onto the object directly,
@@ -43,6 +47,7 @@ class AgentType extends AbstractType
                         'max' => 4096,
                     ]),
                 ],
+                'attr' => ['class' => 'form-group w-100']
             ])
         ;
     }

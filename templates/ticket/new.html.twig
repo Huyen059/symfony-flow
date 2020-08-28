@@ -50,11 +50,13 @@
             </nav>
         </div>
     {% endblock %}
-    <h1>Create new Ticket</h1>
-    <div class="card bg-light mb-3 p-2 border border-primary" style="max-width: 20rem;">
+    <h1 class="h1 my-5 font-weight-normal text-center">Create new Ticket</h1>
+    <div class="card bg-light mb-3 p-2 border border-primary" style="width: 60vw;">
         {{ include('ticket/_form.html.twig') }}
     </div>
-    <button class="btn btn-primary mt-3">
-        <a href="{{ path('customer_home') }}">back to list</a>
-    </button>
+
+    <div>
+        <a class="btn btn-primary mt-3 px-5" href="{{ path('customer_home') }}">Back to List</a>
+    </div>
 {% endblock %}
+

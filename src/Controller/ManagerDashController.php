@@ -113,43 +113,44 @@ class ManagerDashController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/manager/new-agent", name="agent_new", methods={"GET","POST"})
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
-     */
-    public function newAgent(Request $request, UserPasswordEncoderInterface $passwordEncoder)
-    {
-        $agent = new Agent();
-        $form = $this->createForm(AgentType::class, $agent);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
-            $agent->setPassword(
-                $passwordEncoder->encodePassword(
-                    $agent,
-                    $form->get('plainPassword')->getData()
-                )
-            );
-            // Check if agent is second line
-            if($form->get('isSecondLine')){
-                $agent->setIsSecondLine(true);
-                $agent->setRoles([self::ROLE_AGENT_SECOND_LINE]);
-            }
-            // Save this ticket to database
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($agent);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('manager_dash');
-        }
-
-        return $this->render('agent/register.html.twig', [
-            'agent' => $agent,
-            'agentForm' => $form->createView(),
-        ]);
-    }
+//    /**
+//     * @Route("/manager/new-agent", name="agent_new", methods={"GET","POST"})
+//     * @param Request $request
+//     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+//     */
+//    public function newAgent(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+//    {
+//        $agent = new Agent();
+//        $form = $this->createForm(AgentType::class, $agent);
+//        $form->handleRequest($request);
+//        $valid = $form->isValid();
+//        $submit = $form->isSubmitted();
+//        if ($form->isSubmitted() && $form->isValid()) {
+//            // encode the plain password
+//            $agent->setPassword(
+//                $passwordEncoder->encodePassword(
+//                    $agent,
+//                    $form->get('plainPassword')->getData()
+//                )
+//            );
+//            // Check if agent is second line
+//            if($form->get('isSecondLine')){
+//                $agent->setIsSecondLine(true);
+//                $agent->setRoles([self::ROLE_AGENT_SECOND_LINE]);
+//            }
+//            // Save this ticket to database
+//            $entityManager = $this->getDoctrine()->getManager();
+//            $entityManager->persist($agent);
+//            $entityManager->flush();
+//
+//            return $this->redirectToRoute('manager_dash');
+//        }
+//
+//        return $this->render('agent/register.html.twig', [
+//            'agent' => $agent,
+//            'agentForm' => $form->createView(),
+//        ]);
+//    }
 
     /**
      * @Route("/manager/ticket_reset", name="ticket_reset", methods={"POST"})

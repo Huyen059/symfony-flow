@@ -1,7 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Edit ticket{% endblock %}
-{% block stylesheets %}<link rel="stylesheet" href="{{ asset('assets/customerStyle.css') }}">{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/customerStyle.css') }}">{% endblock %}
 {% block body %}
     <style>
         .example-wrapper {
@@ -16,25 +17,73 @@
             padding: 2px 6px;
         }
     </style>
+    <div class="example-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
+            <a class="navbar-brand" href="#"><img class="nav-logo" src="{{ asset('img/symfony_black.png') }}"
+                                                  alt="Symfony logo"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-    <section class="example-wrapper">
-        <h1>Ticket</h1>
-        {#    If there's an error, it will be display here    #}
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item ">
+                        <a class="nav-link" href="{{ path('homepage') }}">Home <span
+                                    class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ path('agent_home') }}">Workplace</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <section>
+        <h1 class="h1 my-5 font-weight-normal text-center">Ticket Details</h1>
+        <hr class="w-50 mx-auto">
+
+        {# If there's an error, it will be display here #}
         <p>{{ error|default('') }}</p>
-        {#    Table containing information of the current ticket    #}
-        <section class="table">
-            <tbody>
-            <table class="table table-hover">
+
+        {% if ticket.status != close %}
+            <div class="d-flex">
+                <div class="border border-info p-2 mx-auto mb-3 d-flex rounded">
+                    <form method="post" class="w-100">
+                        <input type="hidden" name="closeTicket" value="{{ ticket.id }}">
+                        <button type="submit" class="btn btn-primary w-100">Close this ticket</button>
+                    </form>
+                </div>
+                {# Only first line agent can escalate a ticket #}
+                {% if not agent.isSecondLine %}
+                    <div class="border border-info p-2 mx-auto mb-3 d-flex rounded">
+                        <form method="post" class="w-100">
+                            <input type="hidden" name="escalateTicket" value="{{ ticket.id }}">
+                            <button type="submit" class="btn btn-primary w-100">Escalate this ticket</button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {# Table containing information of the current ticket #}
+        <div class="table">
+            <table class="table table-hover" style="width: 60vw">
                 <thead>
                 <tr>
                     <th scope="row">Id</th>
                     <th>{{ ticket.id }}</th>
-               </tr>
+                </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <th scope="row">Title</th>
-                    <td>{{ ticket.title }}</td>
+                    <td>{{ ticket.title|capitalize }}</td>
                 </tr>
                 <tr>
                     <th scope="row">Content</th>
@@ -42,117 +91,91 @@
                 </tr>
                 <tr>
                     <th scope="row">Status</th>
-                    <td>{{ ticket.status }}</td>
+                    <td>
+                        {% if ticket.status == open %}
+                            Open
+                        {% elseif ticket.status == in_progress %}
+                            In progress
+                        {% elseif ticket.status == waiting_feedback %}
+                            Waiting for customer feedback
+                        {% else %}
+                            Close
+                        {% endif %}
+                    </td>
                 </tr>
                 <tr>
-                    <th scope="row">CreatedDate</th>
+                    <th scope="row">Created Date</th>
                     <td>{{ ticket.createdDate ? ticket.createdDate|date('Y-m-d H:i:s') : '' }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">UpdatedDate</th>
+                    <th scope="row">Updated Date</th>
                     <td>{{ ticket.updatedDate ? ticket.updatedDate|date('Y-m-d H:i:s') : '' }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">IsEscalated</th>
+                    <th scope="row">Escalated</th>
                     <td>{{ ticket.isEscalated ? 'Yes' : 'No' }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">CloseReason</th>
+                    <th scope="row">Close Reason</th>
                     <td>{{ ticket.closeReason }}</td>
                 </tr>
                 <tr>
                     <th scope="row">Priority</th>
-                    <td>{{ ticket.priority }}</td>
+                    <td>
+                        {% if ticket.priority == high_priority %}
+                            High
+                        {% elseif ticket.priority == medium_priority %}
+                            Medium
+                        {% else %}
+                            Low
+                        {% endif %}
+                    </td>
                 </tr>
                 </tbody>
             </table>
-
-            <!--<tr>
-                <th>Id</th>
-                <td>{{ ticket.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ ticket.title }}</td>
-            </tr>
-            <tr>
-                <th>Content</th>
-                <td>{{ ticket.content }}</td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <td>{{ ticket.status }}</td>
-            </tr>
-            <tr>
-                <th>CreatedDate</th>
-                <td>{{ ticket.createdDate ? ticket.createdDate|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedDate</th>
-                <td>{{ ticket.updatedDate ? ticket.updatedDate|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>IsEscalated</th>
-                <td>{{ ticket.isEscalated ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>CloseReason</th>
-                <td>{{ ticket.closeReason }}</td>
-            </tr>
-            <tr>
-                <th>Priority</th>
-                <td>{{ ticket.priority }}</td>
-            </tr>
-            </tbody>
-        </table>-->
+        </div>
     </section>
 
 
-    {#  All comments of the current tickets  #}
-    <section class="example-wrapper">
-        <h1>List of comments on this ticket</h1>
+    {# All comments of the current tickets #}
+    <section>
+        <h1 class="h1 my-5 font-weight-normal text-center">Message History</h1>
+
+
         {% for comment in ticket.comments %}
-            <div>
-                <h3>{{ comment.title }}</h3>
-                {% if comment.isPrivate %}
-                    <p>This comment is private!</p>
-                {% endif %}
-                <p>{{ comment.content }}</p>
+            <div class="mb-3">
+                <div class="card" style="width: 60vw;">
+                    <div class="card-body">
+                        <h5 class="card-title font-weight-bold text-center border-bottom">
+                            Title: {{ comment.title|capitalize }}</h5>
+                        {% if comment.isPrivate %}
+                            <div class="alert alert-warning text-center" role="alert">
+                                This comment is private!
+                            </div>
+                        {% endif %}
+                        <p class="card-text lead">Written by: {{ comment.user }}</p>
+                        <p class="card-text">Content: {{ comment.content }}</p>
+                    </div>
+                </div>
             </div>
         {% else %}
-        <p>No comment yet.</p>
+            <div class="card bg-light mb-3 p-1 border border-primary" style="width: 60rem;">
+                <p class="card-text text-center">No Message history so far</p>
+            </div>
         {% endfor %}
     </section>
 
-    {#  If a ticket is not closed, show the form to add comment and button to close/escalate  #}
+    {# If a ticket is not closed, show the form to add comment and button to close/escalate #}
     {% if ticket.status != close %}
-        <section class="example-wrapper">
-            <h1>Add new comment</h1>
-            {{ form_start(form) }}
-            {{ form_widget(form) }}
-            <button type="submit" class="btn btn-primary">Add Comment</button>
-            <!--<button type="submit">Add Comment</button>-->
-            {{ form_end(form) }}
+        <section>
+            <h1 class="h1 my-5 font-weight-normal text-center">Add New Comment</h1>
+            <div class="card bg-light mb-3 p-4 border border-primary" style="width: 60rem;">
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+                <button type="submit" class="btn btn-primary w-100">Add Comment</button>
+                {{ form_end(form) }}
+            </div>
+
         </section>
-        <section class="example-wrapper">
-            <form method="post">
-                <input type="hidden" name="closeTicket" value="{{ ticket.id }}">
-                <!--<button type="submit">Close this ticket</button>-->
-                <button type="submit" class="btn btn-primary">Close this ticket</button>
-            </form>
-        </section>
-        {#  Only first line agent can escalate a ticket      #}
-        {% if not agent.isSecondLine %}
-            <section class="example-wrapper">
-                <form method="post">
-                    <input type="hidden" name="escalateTicket" value="{{ ticket.id }}">
-                    <button type="submit" class="btn btn-primary">Escalate this ticket</button>
-                    <!--<button type="submit">Escalate this ticket</button>-->
-                </form>
-            </section>
-        {% endif %}
     {% endif %}
-
-    <a href="{{ path('agent_home') }}">Back to home</a>
-
 {% endblock %}
